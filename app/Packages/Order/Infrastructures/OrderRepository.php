@@ -1,0 +1,248 @@
+<?php
+
+namespace App\Packages\Order\Infrastructures;
+
+use App\Models\Order as OrderModel;
+use App\Models\OrderItem as OrderItemModel;
+use App\Packages\Order\Domains\OrderRepositoryInterface;
+use App\Packages\Order\Domains\ValueObjects\Order;
+use App\Packages\Order\Domains\ValueObjects\Orders;
+use App\Packages\Order\Domains\ValueObjects\OrderId;
+use App\Packages\Order\Domains\ValueObjects\OrderStatus;
+use App\Packages\Order\Domains\ValueObjects\OrderCustomerInfo;
+use App\Packages\Order\Domains\ValueObjects\OrderItem;
+use App\Packages\Order\Domains\ValueObjects\OrderItems;
+use App\Packages\Order\Domains\ValueObjects\OrderItemId;
+use App\Packages\Order\Domains\ValueObjects\OrderItemName;
+use App\Packages\Order\Domains\ValueObjects\OrderItemPrice;
+use App\Packages\Order\Domains\ValueObjects\ShippingFee;
+use App\Packages\Shared\Domains\ValueObjects\EcSiteCode;
+use Illuminate\Support\Facades\DB;
+use DateTimeImmutable;
+
+class OrderRepository implements OrderRepositoryInterface
+{
+    /**
+     * 注文を保存
+     *
+     * @param Order $order
+     * @return void
+     */
+    public function save(Order $order): void
+    {
+        DB::transaction(function () use ($order) {
+            // 注文の保存
+            $orderModel = OrderModel::updateOrCreate(
+                ['order_id' => $order->getOrderId()->getValue()],
+                [
+                    'ec_site_code' => $order->getEcSiteCode()->getValue(),
+                    'status' => $order->getStatus()->getValue(),
+                    'customer_name' => $order->getCustomerInfo()->getName(),
+                    'customer_email' => $order->getCustomerInfo()->getEmail(),
+                    'customer_phone' => $order->getCustomerInfo()->getPhoneNumber(),
+                    'customer_address' => $order->getCustomerInfo()->getAddress(),
+                    'shipping_fee_with_tax' => $order->getShippingFee()->getPriceWithTax(),
+                    'shipping_fee_without_tax' => $order->getShippingFee()->getPriceWithoutTax(),
+                    'shipping_fee_tax_rate' => $order->getShippingFee()->getTaxRate(),
+                    'total_amount_with_tax' => $order->getTotalAmountWithTax(),
+                    'total_amount_without_tax' => $order->getTotalAmountWithoutTax(),
+                    'ordered_at' => $order->getOrderedAt(),
+                    'updated_at' => $order->getUpdatedAt(),
+                    'created_at' => $order->getCreatedAt(),
+                ]
+            );
+
+            // 注文商品の保存
+            foreach ($order->getOrderItems() as $item) {
+                OrderItemModel::updateOrCreate(
+                    ['item_id' => $item->getItemId()->getValue()],
+                    [
+                        'order_id' => $order->getOrderId()->getValue(),
+                        'name' => $item->getName()->getValue(),
+                        'price_with_tax' => $item->getPrice()->getPriceWithTax(),
+                        'price_without_tax' => $item->getPrice()->getPriceWithoutTax(),
+                        'price_tax_rate' => $item->getPrice()->getTaxRate(),
+                        'quantity' => $item->getQuantity(),
+                        'created_at' => $order->getOrderedAt(),
+                        'updated_at' => $order->getUpdatedAt(),
+                    ]
+                );
+            }
+        });
+    }
+
+    /**
+     * 注文を一括保存
+     */
+    public function saveAll(Orders $orders): void
+    {
+        foreach ($orders as $order) {
+            $this->save($order);
+        }
+    }
+
+    /**
+     * 注文IDから注文を取得
+     *
+     * @param OrderId $orderId
+     * @return Order|null
+     */
+    public function find(OrderId $orderId): ?Order
+    {
+        $orderModel = OrderModel::with('orderItems')
+            ->find($orderId->getValue());
+
+        if (!$orderModel) {
+            return null;
+        }
+
+        return $this->toEntity($orderModel);
+    }
+
+    /**
+     * 最近の注文一覧を取得
+     *
+     * @return Orders
+     */
+    public function getRecentOrders(): Orders
+    {
+        $orderModels = OrderModel::with('orderItems')
+            ->where('ordered_at', '>=', now()->subDays(30))
+            ->orderBy('ordered_at', 'desc')
+            ->get();
+
+        return new Orders(
+            array_map(
+                fn (OrderModel $model) => $this->toEntity($model),
+                $orderModels->all()
+            )
+        );
+    }
+
+    /**
+     * 分割された注文を取得
+     *
+     * @param OrderId $orderId
+     * @return Order
+     * @throws \RuntimeException
+     */
+    public function getDividedOrders(OrderId $orderId): Order
+    {
+        // 現時点では注文の分割機能は未実装
+        throw new \RuntimeException('Order division is not implemented yet.');
+    }
+
+    /**
+     * 注文を更新
+     *
+     * @param Order $order
+     * @return void
+     */
+    public function update(Order $order): void
+    {
+        $this->save($order);
+    }
+
+    /**
+     * 保留中の注文を取得
+     */
+    public function findPending(): Orders
+    {
+        return $this->findByStatus('pending');
+    }
+
+    /**
+     * 失敗した注文を取得
+     */
+    public function findFailed(): Orders
+    {
+        return $this->findByStatus('failed');
+    }
+
+    /**
+     * 未発送の注文を取得
+     */
+    public function findUnshipped(): Orders
+    {
+        return $this->findByStatus('unshipped');
+    }
+
+    /**
+     * 注文を削除
+     */
+    public function delete(OrderId $orderId): void
+    {
+        OrderModel::destroy($orderId->getValue());
+    }
+
+    /**
+     * 注文を一括削除
+     */
+    public function deleteAll(array $orderIds): void
+    {
+        $ids = array_map(fn (OrderId $id) => $id->getValue(), $orderIds);
+        OrderModel::destroy($ids);
+    }
+
+    /**
+     * ステータスで注文を検索
+     */
+    private function findByStatus(string $status): Orders
+    {
+        $orderModels = OrderModel::with('orderItems')
+            ->where('status', $status)
+            ->orderBy('ordered_at', 'desc')
+            ->get();
+
+        return new Orders(
+            array_map(
+                fn (OrderModel $model) => $this->toEntity($model),
+                $orderModels->all()
+            )
+        );
+    }
+
+    /**
+     * モデルをエンティティに変換
+     */
+    private function toEntity(OrderModel $model): Order
+    {
+        // 注文商品の変換
+        $orderItems = new OrderItems(
+            array_map(
+                fn (OrderItemModel $item) => new OrderItem(
+                    new OrderItemId($item->item_id),
+                    new OrderItemName($item->name),
+                    new OrderItemPrice(
+                        $item->price_without_tax,
+                        $item->price_tax_rate
+                    ),
+                    $item->quantity
+                ),
+                $model->orderItems->all()
+            )
+        );
+
+        // 注文の変換
+        return new Order(
+            new OrderId($model->order_id),
+            new EcSiteCode($model->ec_site_code),
+            new OrderStatus($model->status),
+            new DateTimeImmutable($model->ordered_at),
+            new ShippingFee(
+                $model->shipping_fee_without_tax,
+                $model->shipping_fee_tax_rate
+            ),
+            new OrderCustomerInfo(
+                $model->customer_name,
+                $model->customer_email,
+                $model->customer_phone,
+                $model->customer_address
+            ),
+            $orderItems,
+            new DateTimeImmutable($model->created_at),
+            $model->updated_at ? new DateTimeImmutable($model->updated_at) : null,
+            $model->canceled_at ? new DateTimeImmutable($model->canceled_at) : null
+        );
+    }
+} 
