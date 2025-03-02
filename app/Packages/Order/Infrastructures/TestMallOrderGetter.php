@@ -47,22 +47,22 @@ class TestMallOrderGetter implements OrderGetterInterface
     /** @var array<array{name: string, email: string, phone: string, address: string}> */
     private array $repeaterCustomers = [
         [
-            'name' => '山田太郎',
+            'name' => '仮山田太郎',
             'email' => 'yamada.taro@example.com',
             'phone' => '090-1234-5678',
-            'address' => '東京都新宿区西新宿1-1-1',
+            'address' => '東京都仮新宿区西新宿1-1-1',
         ],
         [
-            'name' => '鈴木花子',
+            'name' => '仮鈴木花子',
             'email' => 'suzuki.hanako@example.com',
             'phone' => '090-8765-4321',
-            'address' => '大阪府大阪市中央区心斎橋1-1-1',
+            'address' => '大阪府大阪市仮中央区心斎橋1-1-1',
         ],
         [
-            'name' => '田中次郎',
+            'name' => '仮田中次郎',
             'email' => 'tanaka.jiro@example.com',
             'phone' => '090-5678-1234',
-            'address' => '愛知県名古屋市中村区中村1-1-1',
+            'address' => '愛知県名古屋市仮中村区中村1-1-1',
         ],
     ];
 
@@ -224,7 +224,7 @@ class TestMallOrderGetter implements OrderGetterInterface
 
         $firstName = $firstNames[array_rand($firstNames)];
         $lastName = $lastNames[array_rand($lastNames)];
-        $name = $lastName . ' ' . $firstName;
+        $name = '仮' . $lastName . ' ' . $firstName;
 
         return new OrderCustomerInfo(
             $name,
@@ -235,7 +235,7 @@ class TestMallOrderGetter implements OrderGetterInterface
                 str_pad((string)random_int(100, 999), 3, '0', STR_PAD_LEFT),
                 str_pad((string)random_int(0, 9999), 4, '0', STR_PAD_LEFT),
                 ['東京都', '神奈川県', '埼玉県', '千葉県', '茨城県', '栃木県', '群馬県'][array_rand([0,1,2,3,4,5,6])],
-                ['新宿区', '渋谷区', '品川区', '港区', '中央区', '横浜市', 'さいたま市'][array_rand([0,1,2,3,4,5,6])],
+                ['仮新宿区', '仮渋谷区', '仮品川区', '仮港区', '仮中央区', '仮横浜市', '仮さいたま市'][array_rand([0,1,2,3,4,5,6])],
                 ['本町', '栄町', '中央', '駅前', '緑町'][array_rand([0,1,2,3,4])],
                 random_int(1, 5),
                 random_int(1, 20),

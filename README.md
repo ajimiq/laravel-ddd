@@ -4,7 +4,7 @@
 
 - 架空のECサイトから受注データを取得して、管理するシステムです。
 - DDD（オーニオンアーキテクチャ）をベースにLaravelでの開発の練習用に作成しています。
-- GitHub Copitot,Cursorを活用して、開発しています。
+- GitHub Copitot,Cursor(主にCursor)を活用して、開発しています。
 
 ## 開発環境
 
@@ -27,6 +27,8 @@
 ```
 .
 ├── app/
+│   ├── Console/
+│   │   └── Commands/ -> バッチ
 │   ├── Http/
 │   │   └── Controllers/ -> コントローラ
 │   ├── Models/ -> モデル
