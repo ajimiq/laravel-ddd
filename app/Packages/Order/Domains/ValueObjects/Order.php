@@ -1,0 +1,209 @@
+<?php
+
+namespace App\Packages\Order\Domains\ValueObjects;
+
+use DateTimeImmutable;
+use App\Packages\Order\Domains\ValueObjects\OrderId;
+use App\Packages\Order\Domains\ValueObjects\OrderStatus;
+use App\Packages\Order\Domains\ValueObjects\ShippingFee;
+use App\Packages\Order\Domains\ValueObjects\OrderCustomerInfo;
+use App\Packages\Order\Domains\ValueObjects\OrderItems;
+use App\Packages\Shared\Domains\ValueObjects\EcSiteCode;
+
+class Order
+{
+    private OrderId $orderId;
+    private EcSiteCode $ecSiteCode;
+    private OrderStatus $status;
+    private DateTimeImmutable $orderedAt;
+    private ShippingFee $shippingFee;
+    private OrderCustomerInfo $customerInfo;
+    private OrderItems $orderItems;
+    private DateTimeImmutable $createdAt;
+    private ?DateTimeImmutable $updatedAt;
+    private ?DateTimeImmutable $canceledAt;
+
+    public function __construct(
+        OrderId $orderId,
+        EcSiteCode $ecSiteCode,
+        OrderStatus $status,
+        DateTimeImmutable $orderedAt,
+        ShippingFee $shippingFee,
+        OrderCustomerInfo $customerInfo,
+        OrderItems $orderItems,
+        DateTimeImmutable $createdAt,
+        ?DateTimeImmutable $updatedAt = null,
+        ?DateTimeImmutable $canceledAt = null
+    ) {
+        $this->orderId = $orderId;
+        $this->ecSiteCode = $ecSiteCode;
+        $this->status = $status;
+        $this->orderedAt = $orderedAt;
+        $this->shippingFee = $shippingFee;
+        $this->customerInfo = $customerInfo;
+        $this->orderItems = $orderItems;
+        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
+        $this->canceledAt = $canceledAt;
+    }
+
+    /**
+     * 注文IDを取得
+     */
+    public function getOrderId(): OrderId
+    {
+        return $this->orderId;
+    }
+
+    /**
+     * 注文ステータスを取得
+     */
+    public function getStatus(): OrderStatus
+    {
+        return $this->status;
+    }
+
+    /**
+     * 送料を取得
+     */
+    public function getShippingFee(): ShippingFee
+    {
+        return $this->shippingFee;
+    }
+
+    /**
+     * 顧客情報を取得
+     */
+    public function getCustomerInfo(): OrderCustomerInfo
+    {
+        return $this->customerInfo;
+    }
+
+    /**
+     * 商品リストを取得
+     */
+    public function getOrderItems(): OrderItems
+    {
+        return $this->orderItems;
+    }
+
+    /**
+     * 注文日時を取得
+     */
+    public function getOrderedAt(): DateTimeImmutable
+    {
+        return $this->orderedAt;
+    }
+
+    /**
+     * 登録日時を取得
+     */
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * 更新日時を取得
+     */
+    public function getUpdatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * キャンセル日時を取得
+     */
+    public function getCanceledAt(): ?DateTimeImmutable
+    {
+        return $this->canceledAt;
+    }
+
+    /**
+     * 保留中かどうかを確認
+     */
+    public function isPending(): bool
+    {
+        return $this->status->isPending();
+    }
+
+    /**
+     * 失敗したかどうかを確認
+     */
+    public function isFailure(): bool
+    {
+        return $this->status->isFailure();
+    }
+
+    // /**
+    //  * 分割可能かどうかを確認
+    //  */
+    // public function isDividable(): bool
+    // {
+    //     return $this->amount->isDividable() && $this->itemList->isDividable();
+    // }
+
+    /**
+     * ステータスを更新
+     */
+    public function updateStatus(OrderStatus $newStatus): void
+    {
+        $this->status = $newStatus;
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
+    /**
+     * 注文合計を取得
+     * 商品小計 + 送料
+     */
+    public function getTotalAmountWithTax(): int
+    {
+        return $this->orderItems->getSubtotalWithTax() + $this->shippingFee->getPriceWithTax();
+    }
+
+    /**
+     * 注文合計（税抜）を取得
+     * 商品小計（税抜） + 送料（税抜）
+     */
+    public function getTotalAmountWithoutTax(): int
+    {
+        return $this->orderItems->getSubtotalWithoutTax() + $this->shippingFee->getPriceWithoutTax();
+    }
+
+    /**
+     * 注文の税額合計を取得
+     */
+    public function getTotalTaxAmount(): int
+    {
+        return $this->getTotalAmountWithTax() - $this->getTotalAmountWithoutTax();
+    }
+
+    /**
+     * ECサイトコードを取得
+     */
+    public function getEcSiteCode(): EcSiteCode
+    {
+        return $this->ecSiteCode;
+    }
+
+    /**
+     * 注文を配列に変換
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'order_id' => $this->orderId->getValue(),
+            'ec_site_code' => $this->ecSiteCode->getValue(),
+            'status' => $this->status->getValue(),
+            'total_amount_with_tax' => $this->getTotalAmountWithTax(),
+            'total_amount_without_tax' => $this->getTotalAmountWithoutTax(),
+            'order_items' => $this->orderItems->toArray(),
+            'ordered_at' => $this->orderedAt->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
+            'canceled_at' => $this->canceledAt?->format('Y-m-d H:i:s'),
+        ];
+    }
+
+} 
