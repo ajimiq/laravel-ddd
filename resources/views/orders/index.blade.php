@@ -102,7 +102,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 space-x-2">
                                 {{-- 詳細ボタン --}}
-                                <a href="{{ route('orders.detail', $order->order_id) }}" 
+                                <a href="{{ route('orders.show', $order->order_id) }}" 
                                     class="text-blue-600 hover:text-blue-900"
                                     target="_blank">
                                      詳細

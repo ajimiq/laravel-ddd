@@ -114,7 +114,7 @@ class OrderController extends Controller
     {
         $result = $this->orderShowUseCase->execute($orderId);
         
-        return view('orders.detail', [
+        return view('orders.show', [
             'order' => $result['order'],
             'taxAmountsByRate' => $result['tax_amounts_by_rate'],
             'statuses' => $result['statuses'],
