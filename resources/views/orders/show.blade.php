@@ -46,14 +46,9 @@
                                 {{ $order->status === 'shipped' ? 'bg-green-100 text-green-800' : 
                                    ($order->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
                                    ($order->status === 'failed' ? 'bg-red-100 text-red-800' : 
-                                   ($order->status === 'canceled' ? 'bg-gray-100 text-gray-800' : 'bg-blue-100 text-blue-800'))) }}">
+                                   ($order->status === 'cancelled' ? 'bg-red-100 text-gray-800' : 'bg-blue-100 text-blue-800'))) }}">
                                 {{ $statuses[$order->status] ?? $order->status }}
                             </span>
-                            @if($order->canceled_at)
-                                <span class="block text-xs text-gray-500 mt-1">
-                                    キャンセル日時: {{ $order->canceled_at->format('Y年m月d日 H:i') }}
-                                </span>
-                            @endif
                         </dd>
                     </dl>
                 </div>
@@ -75,7 +70,24 @@
                     </dl>
                 </div>
             </div>
+            <!-- キャンセル情報 -->
+            @if($order->status === 'cancelled')
+            <div class="mt-4">
+                <h4 class="font-bold mb-2">キャンセル情報</h4>
+                <div class="bg-gray-50 p-4 rounded">
+                    <div class="mb-2">
+                        <span class="text-gray-600">キャンセル日時:</span>
+                        <span class="ml-2">{{ $order->canceled_at->format('Y-m-d H:i:s') }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">キャンセル理由:</span>
+                        <span class="ml-2">{{ $order->cancel_reason }}</span>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
+
 
         {{-- 注文商品 --}}
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -144,19 +156,6 @@
             <a href="{{ route('orders.receipt', $order->order_id) }}" 
                target="_blank"
                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">領収書を表示</a>
-
-            {{-- @if($order->status === 'unshipped')
-                <form action="{{ route('orders.cancel', $order->order_id) }}" 
-                      method="POST"
-                      onsubmit="return confirm('注文をキャンセルしてもよろしいですか？');">
-                    @csrf
-                    @method('PATCH')
-                    <button type="submit" 
-                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                        注文をキャンセル
-                    </button>
-                </form>
-            @endif --}}
         </div>
     </div>
 </body>

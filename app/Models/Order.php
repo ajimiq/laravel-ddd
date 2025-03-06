@@ -41,6 +41,8 @@ class Order extends Model
         'total_amount_without_tax',
         'created_at',
         'updated_at',
+        'canceled_at',
+        'cancel_reason',
     ];
 
     /**

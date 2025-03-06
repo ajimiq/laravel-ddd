@@ -94,9 +94,9 @@ class OrderShowUseCase
         $statuses = [
             'pending' => '保留中',
             'failed' => '失敗',
-            'unshipped' => '未発送',
+            'unshipped' => '決済待ち',
             'shipped' => '発送済み',
-            'canceled' => 'キャンセル済',
+            'cancelled' => 'キャンセル',
         ];
 
         return [

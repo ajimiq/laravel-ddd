@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('status', 20); // pending, failed, unshipped
             $table->timestamp('ordered_at');
             $table->timestamp('canceled_at')->nullable();
+            $table->text('cancel_reason')->nullable();
             $table->string('customer_name');
             $table->string('customer_email');
             $table->string('customer_phone');
