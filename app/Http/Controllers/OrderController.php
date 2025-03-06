@@ -8,12 +8,15 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
 use App\Packages\Order\UseCases\OrderShowUseCase;
 use App\Packages\Order\UseCases\OrderShowReceiptUseCase;
+use App\Packages\Order\UseCases\OrderCancelUseCase;
+use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
     public function __construct(
         private readonly OrderShowUseCase $orderShowUseCase,
-        private readonly OrderShowReceiptUseCase $orderShowReceiptUseCase
+        private readonly OrderShowReceiptUseCase $orderShowReceiptUseCase,
+        private readonly OrderCancelUseCase $orderCancelUseCase
     ) {
     }
 
@@ -47,8 +50,9 @@ class OrderController extends Controller
         return view('orders.index', [
             'orders' => $orders,
             'statuses' => [
-                'pending' => '決済待ち',
+                'pending' => '保留中',
                 // 'failed' => '失敗',
+                'cancelled' => 'キャンセル',
                 'unshipped' => '未発送',
                 // 'shipped' => '発送済み',
             ],
@@ -70,18 +74,26 @@ class OrderController extends Controller
         return back()->with('error', '領収書の出力は準備中です。');
     }
 
-    public function cancel(string $orderId)
+    /**
+     * 注文をキャンセル
+     */
+    public function cancel(Request $request, string $orderId): JsonResponse
     {
-        $order = Order::findOrFail($orderId);
-        
-        if ($order->status !== 'unshipped') {
-            return back()->with('error', 'この注文はキャンセルできません。');
+        try {
+            $this->orderCancelUseCase->execute(
+                $orderId,
+                $request->input('cancel_reason'),
+                now()->format('Y-m-d H:i:s')
+            );
+
+            return response()->json([
+                'message' => '注文をキャンセルしました。',
+            ]);
+        } catch (\RuntimeException $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 400);
         }
-        
-        // キャンセル処理
-        $order->update(['status' => 'canceled']);
-        
-        return back()->with('success', '注文をキャンセルしました。');
     }
 
     /**
@@ -113,11 +125,12 @@ class OrderController extends Controller
     public function showDetail(string $orderId): View
     {
         $result = $this->orderShowUseCase->execute($orderId);
-        
+
         return view('orders.show', [
             'order' => $result['order'],
             'taxAmountsByRate' => $result['tax_amounts_by_rate'],
             'statuses' => $result['statuses'],
+            'events' => $result['events'],
         ]);
     }
 } 
