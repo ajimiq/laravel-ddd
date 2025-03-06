@@ -130,7 +130,6 @@ class OrderController extends Controller
             'order' => $result['order'],
             'taxAmountsByRate' => $result['tax_amounts_by_rate'],
             'statuses' => $result['statuses'],
-            'events' => $result['events'],
         ]);
     }
 } 

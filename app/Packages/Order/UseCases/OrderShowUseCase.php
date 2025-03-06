@@ -4,7 +4,6 @@ namespace App\Packages\Order\UseCases;
 
 use App\Models\Order as OrderModel;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
-use App\Packages\Order\Domains\OrderEventRepositoryInterface;
 use App\Packages\Order\Domains\Services\InvoiceService;
 use App\Packages\Order\Domains\ValueObjects\Order;
 use App\Packages\Order\Domains\ValueObjects\OrderId;
@@ -18,8 +17,6 @@ use App\Packages\Order\Domains\ValueObjects\OrderItemName;
 use App\Packages\Order\Domains\ValueObjects\OrderItemPrice;
 use App\Packages\Shared\Domains\ValueObjects\EcSiteCode;
 use DateTimeImmutable;
-use App\Packages\Order\Domains\Events\OrderCancelledEvent;
-use App\Packages\Order\Domains\Repositories\OrderEventRepository;
 
 use Illuminate\Support\Facades\Log;
 
@@ -27,8 +24,7 @@ class OrderShowUseCase
 {
     public function __construct(
         private readonly OrderRepositoryInterface $orderRepository,
-        private readonly InvoiceService $invoiceService,
-        private readonly OrderEventRepositoryInterface $orderEventRepository
+        private readonly InvoiceService $invoiceService
     ) {
     }
 
@@ -43,8 +39,7 @@ class OrderShowUseCase
      *     subtotal_without_tax: int,
      *     tax_amount: int
      *   }>,
-     *   statuses: array<string, string>,
-     *   events: array<OrderCancelledEvent>
+     *   statuses: array<string, string>
      * }
      */
     public function execute(string $orderId): array
@@ -104,14 +99,10 @@ class OrderShowUseCase
             'cancelled' => 'キャンセル',
         ];
 
-        // イベント履歴を取得
-        $events = $this->orderEventRepository->getOrderEvents($orderId);
-
         return [
             'order' => $orderModel, // ビューで使用するためにEloquentモデルを返す
             'tax_amounts_by_rate' => $taxAmountsByRate,
             'statuses' => $statuses,
-            'events' => $events,
         ];
     }
 } 

@@ -46,14 +46,9 @@
                                 {{ $order->status === 'shipped' ? 'bg-green-100 text-green-800' : 
                                    ($order->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
                                    ($order->status === 'failed' ? 'bg-red-100 text-red-800' : 
-                                   ($order->status === 'cancelled' ? 'bg-gray-100 text-gray-800' : 'bg-blue-100 text-blue-800'))) }}">
+                                   ($order->status === 'cancelled' ? 'bg-red-100 text-gray-800' : 'bg-blue-100 text-blue-800'))) }}">
                                 {{ $statuses[$order->status] ?? $order->status }}
                             </span>
-                            @if($order->canceled_at)
-                                <span class="block text-xs text-gray-500 mt-1">
-                                    キャンセル日時: {{ $order->canceled_at->format('Y年m月d日 H:i') }}
-                                </span>
-                            @endif
                         </dd>
                     </dl>
                 </div>
@@ -75,7 +70,24 @@
                     </dl>
                 </div>
             </div>
+            <!-- キャンセル情報 -->
+            @if($order->status === 'cancelled')
+            <div class="mt-4">
+                <h4 class="font-bold mb-2">キャンセル情報</h4>
+                <div class="bg-gray-50 p-4 rounded">
+                    <div class="mb-2">
+                        <span class="text-gray-600">キャンセル日時:</span>
+                        <span class="ml-2">{{ $order->canceled_at->format('Y-m-d H:i:s') }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">キャンセル理由:</span>
+                        <span class="ml-2">{{ $order->cancel_reason }}</span>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
+
 
         {{-- 注文商品 --}}
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -139,83 +151,11 @@
             </div>
         </div>
 
-        <!-- キャンセル情報 -->
-        @if($order->status === 'cancelled')
-        <div class="mt-4">
-            <h4 class="font-bold mb-2">キャンセル情報</h4>
-            <div class="bg-gray-50 p-4 rounded">
-                <div class="mb-2">
-                    <span class="text-gray-600">キャンセル日時:</span>
-                    <span class="ml-2">{{ $order->canceled_at->format('Y-m-d H:i:s') }}</span>
-                </div>
-                <div>
-                    <span class="text-gray-600">キャンセル理由:</span>
-                    <span class="ml-2">{{ $order->cancel_reason }}</span>
-                </div>
-            </div>
-        </div>
-        @endif
-
-        {{-- イベント履歴 --}}
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 class="text-lg font-bold mb-4">更新履歴</h2>
-            <div class="space-y-4">
-                @foreach($events as $event)
-                    @dd($event)
-                    <div class="border-l-4 border-blue-500 pl-4">
-                        <div class="text-sm text-gray-600">
-                            {{ $event->triggered_by }}
-                        </div>
-                        <div class="mt-1">
-                            @if($event->event_type === 'order_cancelled')
-                                <div class="font-medium">注文キャンセル</div>
-                                <div class="mt-2 text-sm">
-                                    <div class="mb-2">
-                                        <span class="font-medium">キャンセル理由:</span>
-                                        <span class="ml-2">{{ $event->event_data['cancel_reason'] }}</span>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <div class="font-medium mb-1">更新前</div>
-                                            <div class="text-sm bg-gray-50 p-2 rounded">
-                                                <div>ステータス: {{ $event->event_data['before_state']['status'] }}</div>
-                                                <div>キャンセル日時: {{ $event->event_data['before_state']['canceled_at'] ?? '-' }}</div>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div class="font-medium mb-1">更新後</div>
-                                            <div class="text-sm bg-gray-50 p-2 rounded">
-                                                <div>ステータス: {{ $event->event_data['after_state']['status'] }}</div>
-                                                <div>キャンセル日時: {{ $event->event_data['after_state']['canceled_at'] }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-
         {{-- 操作ボタン --}}
         <div class="flex justify-end space-x-4">
             <a href="{{ route('orders.receipt', $order->order_id) }}" 
                target="_blank"
                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">領収書を表示</a>
-
-            @if($order->status === 'unshipped')
-                <form action="{{ route('orders.cancel', $order->order_id) }}" 
-                      method="POST"
-                      onsubmit="return confirm('注文をキャンセルしてもよろしいですか？');">
-                    @csrf
-                    @method('PATCH')
-                    <button type="submit" 
-                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                        注文をキャンセル
-                    </button>
-                </form>
-            @endif
         </div>
     </div>
 </body>
