@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use App\Packages\Order\UseCases\OrderShowUseCase;
 use App\Packages\Order\UseCases\OrderShowReceiptUseCase;
 use App\Packages\Order\UseCases\OrderCancelUseCase;
+use App\Packages\Order\UseCases\OrderIndexUseCase;
 use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
@@ -16,7 +17,8 @@ class OrderController extends Controller
     public function __construct(
         private readonly OrderShowUseCase $orderShowUseCase,
         private readonly OrderShowReceiptUseCase $orderShowReceiptUseCase,
-        private readonly OrderCancelUseCase $orderCancelUseCase
+        private readonly OrderCancelUseCase $orderCancelUseCase,
+        private readonly OrderIndexUseCase $orderIndexUseCase
     ) {
     }
 
@@ -25,43 +27,13 @@ class OrderController extends Controller
      */
     public function index(Request $request): View
     {
-        Log::channel('online')->info(var_export($request->all(), true));
-
-        $query = Order::query()->with('orderItems');
-        // ステータスで絞り込み
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        // 注文日で絞り込み
-        if ($request->filled('ordered_from')) {
-            $query->where('ordered_at', '>=', $request->ordered_from . ' 00:00:00');
-        }
-        if ($request->filled('ordered_to')) {
-            $query->where('ordered_at', '<=', $request->ordered_to . ' 23:59:59');
-        }
-
-        // 注文日の降順でソート
-        $query->orderBy('ordered_at', 'desc');
-
-        // ページネーション（1ページ10件）
-        $orders = $query->paginate(10)->withQueryString();
-
-        return view('orders.index', [
-            'orders' => $orders,
-            'statuses' => [
-                'pending' => '保留中',
-                // 'failed' => '失敗',
-                'cancelled' => 'キャンセル',
-                'unshipped' => '未発送',
-                // 'shipped' => '発送済み',
-            ],
-            'search' => [
-                'status' => $request->status,
-                'ordered_from' => $request->ordered_from,
-                'ordered_to' => $request->ordered_to,
-            ],
+        $result = $this->orderIndexUseCase->execute([
+            'status' => $request->status,
+            'ordered_from' => $request->ordered_from,
+            'ordered_to' => $request->ordered_to,
         ]);
+
+        return view('orders.index', $result);
     }
 
     public function downloadReceipt(string $orderId)
