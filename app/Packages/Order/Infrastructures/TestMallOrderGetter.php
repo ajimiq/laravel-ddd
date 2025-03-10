@@ -84,7 +84,7 @@ class TestMallOrderGetter implements OrderGetterInterface
             $orderId = $this->generateOrderId($orderedAt);
             $statuses = ['pending', 'unshipped'];
             $status = new OrderStatus($statuses[array_rand($statuses)]);
-            
+
             $customerInfo = (mt_rand(1, 100) <= 10)
                 ? $this->getRepeaterCustomerInfo()
                 : $this->generateRandomCustomerInfo();
@@ -138,11 +138,9 @@ class TestMallOrderGetter implements OrderGetterInterface
         };
 
         $selectedProducts = array_rand($this->products, $numItems);
-        Log::channel('debug')->debug('selectedProducts: ' . json_encode($selectedProducts));
         if (!is_array($selectedProducts)) {
             $selectedProducts = [$selectedProducts];
         }
-        Log::channel('debug')->debug('selectedProducts: ' . json_encode($selectedProducts));
 
         // 商品を1つ以上確実に選択する
         if (count($selectedProducts) === 0) {
@@ -150,6 +148,7 @@ class TestMallOrderGetter implements OrderGetterInterface
             shuffle($productKeys);
             $selectedProducts = array_slice($productKeys, 0, $numItems);
         }
+        Log::channel('debug')->debug('after2 selectedProducts: ' . json_encode($selectedProducts));
 
         foreach ($selectedProducts as $productKey) {
             $product = $this->products[$productKey];
@@ -164,6 +163,7 @@ class TestMallOrderGetter implements OrderGetterInterface
                 $quantity
             );
         }
+        Log::channel('debug')->debug('after2 selectedProducts: ' . var_export($items, true));
 
         return new OrderItems($items);
     }
@@ -228,7 +228,7 @@ class TestMallOrderGetter implements OrderGetterInterface
 
         return new OrderCustomerInfo(
             $name,
-            mb_strtolower($this->toRomaji($firstName)) . '.' . mb_strtolower($this->toRomaji($lastName)) . '@example.com',
+            mb_strtolower($this->toRomaji($firstName)) . '.kari' . mb_strtolower($this->toRomaji($lastName)) . '@example.com',
             sprintf('0%d-1234-5678', random_int(1, 9)),
             sprintf(
                 '〒%s-%s %s%s%s%d-%d-%d', 
@@ -253,18 +253,6 @@ class TestMallOrderGetter implements OrderGetterInterface
             $repeater['phone'],
             $repeater['address']
         );
-    }
-
-    private function generateRandomAddress(): string
-    {
-        $prefectures = ['東京都', '大阪府', '神奈川県', '愛知県', '福岡県'];
-        $cities = ['中央区', '北区', '南区', '西区', '東区'];
-        
-        return $prefectures[array_rand($prefectures)] . 
-               $cities[array_rand($cities)] . 
-               mt_rand(1, 9) . '-' . 
-               mt_rand(1, 99) . '-' . 
-               mt_rand(1, 99);
     }
 
     private function calculateShippingFee(OrderItems $orderItems): int

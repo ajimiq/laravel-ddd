@@ -55,9 +55,9 @@ class OrderRepository implements OrderRepositoryInterface
             // 注文商品の保存
             foreach ($order->getOrderItems() as $item) {
                 OrderItemModel::updateOrCreate(
-                    ['item_id' => $item->getItemId()->getValue()],
                     [
                         'order_id' => $order->getOrderId()->getValue(),
+                        'item_id' => $item->getItemId()->getValue(),
                         'name' => $item->getName()->getValue(),
                         'price_with_tax' => $item->getPrice()->getPriceWithTax(),
                         'price_without_tax' => $item->getPrice()->getPriceWithoutTax(),
