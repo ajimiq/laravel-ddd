@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItem extends Model
 {
-    /**
-     * プライマリーキーの設定
-     */
-    protected $primaryKey = 'item_id';
-    public $incrementing = false;
-    protected $keyType = 'string';
+    // /**
+    //  * プライマリーキーの設定
+    //  */
+    // protected $primaryKey = 'item_id';
+    // public $incrementing = false;
+    // protected $keyType = 'string';
 
     /**
      * タイムスタンプの設定

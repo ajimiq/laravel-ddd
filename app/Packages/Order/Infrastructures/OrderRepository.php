@@ -18,6 +18,7 @@ use App\Packages\Order\Domains\ValueObjects\OrderItemPrice;
 use App\Packages\Order\Domains\ValueObjects\ShippingFee;
 use App\Packages\Shared\Domains\ValueObjects\EcSiteCode;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\LengthAwarePaginator;
 use DateTimeImmutable;
 
 class OrderRepository implements OrderRepositoryInterface
@@ -55,9 +56,9 @@ class OrderRepository implements OrderRepositoryInterface
             // 注文商品の保存
             foreach ($order->getOrderItems() as $item) {
                 OrderItemModel::updateOrCreate(
-                    ['item_id' => $item->getItemId()->getValue()],
                     [
                         'order_id' => $order->getOrderId()->getValue(),
+                        'item_id' => $item->getItemId()->getValue(),
                         'name' => $item->getName()->getValue(),
                         'price_with_tax' => $item->getPrice()->getPriceWithTax(),
                         'price_without_tax' => $item->getPrice()->getPriceWithoutTax(),
@@ -244,5 +245,36 @@ class OrderRepository implements OrderRepositoryInterface
             $model->updated_at ? new DateTimeImmutable($model->updated_at) : null,
             $model->canceled_at ? new DateTimeImmutable($model->canceled_at) : null
         );
+    }
+
+    /**
+     * 検索条件付きの注文一覧を取得
+     *
+     * @param array $searchParams
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function searchOrders(array $searchParams, int $perPage): LengthAwarePaginator
+    {
+        $query = OrderModel::query()->with('orderItems');
+        
+        // ステータスで絞り込み
+        if (!empty($searchParams['status'])) {
+            $query->where('status', $searchParams['status']);
+        }
+
+        // 注文日で絞り込み
+        if (!empty($searchParams['ordered_from'])) {
+            $query->where('ordered_at', '>=', $searchParams['ordered_from'] . ' 00:00:00');
+        }
+        if (!empty($searchParams['ordered_to'])) {
+            $query->where('ordered_at', '<=', $searchParams['ordered_to'] . ' 23:59:59');
+        }
+
+        // 注文日の降順でソート
+        $query->orderBy('ordered_at', 'desc');
+
+        // ページネーション
+        return $query->paginate($perPage)->withQueryString();
     }
 } 

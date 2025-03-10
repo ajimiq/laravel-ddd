@@ -5,6 +5,7 @@ namespace App\Packages\Order\Domains;
 use App\Packages\Order\Domains\ValueObjects\Order;
 use App\Packages\Order\Domains\ValueObjects\Orders;
 use App\Packages\Order\Domains\ValueObjects\OrderId;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface OrderRepositoryInterface
 {
@@ -22,6 +23,15 @@ interface OrderRepositoryInterface
      * @return Orders
      */
     public function getRecentOrders(): Orders;
+
+    /**
+     * 検索条件付きの注文一覧を取得
+     *
+     * @param array $searchParams
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function searchOrders(array $searchParams, int $perPage): LengthAwarePaginator;
 
     /**
      * 分割された注文を取得
