@@ -7,11 +7,14 @@ use App\Packages\Order\Domains\ValueObjects\Orders;
 interface OrderGetterInterface
 {
     /**
-     * 最近の注文一覧を取得
+     * 注文一覧を取得
      *
+     * @param int $fromDays 取得開始日（n日前）
+     * @param int $toDays 取得終了日（n日前）
+     * @param int $limit 取得件数
      * @return Orders
      */
-    public function getRecentOrders(): Orders;
+    public function getOrders(int $fromDays = 30, int $toDays = 0, int $limit = 10): Orders;
 
     // /**
     //  * 分割された注文を取得

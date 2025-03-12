@@ -4,7 +4,8 @@ namespace App\Packages\Order\UseCases;
 
 use App\Models\Order as OrderModel;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Packages\Order\UseCases\Dtos\OrderIndexRequestDto;
+use App\Packages\Order\UseCases\Dtos\OrderIndexResponseDto;
 use Illuminate\Support\Facades\Log;
 
 class OrderIndexUseCase
@@ -17,28 +18,18 @@ class OrderIndexUseCase
     /**
      * 注文一覧を取得
      * 
-     * @param array{
-     *   status?: string,
-     *   ordered_from?: string,
-     *   ordered_to?: string
-     * } $searchParams
-     * @param int $perPage
-     * @return array{
-     *   orders: LengthAwarePaginator,
-     *   statuses: array<string, string>,
-     *   search: array{
-     *     status: ?string,
-     *     ordered_from: ?string,
-     *     ordered_to: ?string
-     *   }
-     * }
+     * @param OrderIndexRequestDto $requestDto
+     * @return OrderIndexResponseDto
      */
-    public function execute(array $searchParams = [], int $perPage = 10): array
+    public function execute(OrderIndexRequestDto $requestDto): OrderIndexResponseDto
     {
-        Log::channel('online')->info(var_export($searchParams, true));
+        Log::channel('online')->info(var_export($requestDto->toArray(), true));
 
         // リポジトリを使用して注文一覧を取得
-        $orders = $this->orderRepository->searchOrders($searchParams, $perPage);
+        $orders = $this->orderRepository->searchOrders(
+            $requestDto->toArray(),
+            $requestDto->getPerPage()
+        );
 
         // ステータス一覧
         $statuses = [
@@ -47,14 +38,14 @@ class OrderIndexUseCase
             'unshipped' => '未発送',
         ];
 
-        return [
-            'orders' => $orders,
-            'statuses' => $statuses,
-            'search' => [
-                'status' => $searchParams['status'] ?? null,
-                'ordered_from' => $searchParams['ordered_from'] ?? null,
-                'ordered_to' => $searchParams['ordered_to'] ?? null,
-            ],
-        ];
+        return new OrderIndexResponseDto(
+            $orders,
+            $statuses,
+            [
+                'status' => $requestDto->getStatus(),
+                'ordered_from' => $requestDto->getOrderedFrom(),
+                'ordered_to' => $requestDto->getOrderedTo(),
+            ]
+        );
     }
 } 

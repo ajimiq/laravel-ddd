@@ -15,6 +15,8 @@ use App\Packages\Order\Domains\ValueObjects\OrderItem;
 use App\Packages\Order\Domains\ValueObjects\OrderItemId;
 use App\Packages\Order\Domains\ValueObjects\OrderItemName;
 use App\Packages\Order\Domains\ValueObjects\OrderItemPrice;
+use App\Packages\Order\UseCases\Dtos\OrderShowReceiptRequestDto;
+use App\Packages\Order\UseCases\Dtos\OrderShowReceiptResponseDto;
 use App\Packages\Shared\Domains\ValueObjects\EcSiteCode;
 use DateTimeImmutable;
 use Illuminate\Support\Facades\Config;
@@ -30,33 +32,15 @@ class OrderShowReceiptUseCase
     /**
      * 領収書データを取得
      * 
-     * @return array{
-     *   order: OrderModel,
-     *   company: array{
-     *     name: string,
-     *     postal_code: string,
-     *     address: string,
-     *     tel: string,
-     *     registration_number: string
-     *   },
-     *   receipt: array{
-     *     number: string,
-     *     issue_date: \DateTimeImmutable
-     *   },
-     *   tax_amounts_by_rate: array<float, array{
-     *     tax_rate: float,
-     *     subtotal_with_tax: int,
-     *     subtotal_without_tax: int,
-     *     tax_amount: int
-     *   }>
-     * }
+     * @param OrderShowReceiptRequestDto $requestDto
+     * @return OrderShowReceiptResponseDto
      */
-    public function execute(string $orderId): array
+    public function execute(OrderShowReceiptRequestDto $requestDto): OrderShowReceiptResponseDto
     {
         // Eloquentモデルとして注文を取得
         $orderModel = OrderModel::with(['orderItems' => function($query) {
             $query->orderBy('created_at');
-        }])->findOrFail($orderId);
+        }])->findOrFail($requestDto->getOrderId());
 
         // 注文商品の変換
         $orderItems = new OrderItems(
@@ -101,28 +85,24 @@ class OrderShowReceiptUseCase
 
         // 会社情報
         $company = [
-            'name' => Config::get('app.company_name', '株式会社サンプル'),
-            'postal_code' => '123-4567',
-            'address' => '東京都渋谷区サンプル1-2-3',
-            'tel' => '03-1234-5678',
-            'registration_number' => 'T1234567890123',
+            'name' => Config::get('company.name'),
+            'postal_code' => Config::get('company.postal_code'),
+            'address' => Config::get('company.address'),
+            'tel' => Config::get('company.tel'),
+            'registration_number' => Config::get('company.registration_number'),
         ];
 
         // 領収書情報
-        $now = new DateTimeImmutable();
         $receipt = [
-            'number' => sprintf('R%s-%s', 
-                $now->format('Ymd'), 
-                substr($orderId, -4)
-            ),
-            'issue_date' => $now,
+            'number' => 'R' . $orderModel->order_id,
+            'issue_date' => new DateTimeImmutable(),
         ];
 
-        return [
-            'order' => $orderModel,
-            'company' => $company,
-            'receipt' => $receipt,
-            'tax_amounts_by_rate' => $taxAmountsByRate,
-        ];
+        return new OrderShowReceiptResponseDto(
+            $orderModel,
+            $company,
+            $receipt,
+            $taxAmountsByRate
+        );
     }
 } 

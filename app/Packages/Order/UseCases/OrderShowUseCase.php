@@ -15,6 +15,8 @@ use App\Packages\Order\Domains\ValueObjects\OrderItem;
 use App\Packages\Order\Domains\ValueObjects\OrderItemId;
 use App\Packages\Order\Domains\ValueObjects\OrderItemName;
 use App\Packages\Order\Domains\ValueObjects\OrderItemPrice;
+use App\Packages\Order\UseCases\Dtos\OrderShowRequestDto;
+use App\Packages\Order\UseCases\Dtos\OrderShowResponseDto;
 use App\Packages\Shared\Domains\ValueObjects\EcSiteCode;
 use DateTimeImmutable;
 
@@ -31,23 +33,15 @@ class OrderShowUseCase
     /**
      * 注文詳細を取得
      * 
-     * @return array{
-     *   order: Order,
-     *   tax_amounts_by_rate: array<float, array{
-     *     tax_rate: float,
-     *     subtotal_with_tax: int,
-     *     subtotal_without_tax: int,
-     *     tax_amount: int
-     *   }>,
-     *   statuses: array<string, string>
-     * }
+     * @param OrderShowRequestDto $requestDto
+     * @return OrderShowResponseDto
      */
-    public function execute(string $orderId): array
+    public function execute(OrderShowRequestDto $requestDto): OrderShowResponseDto
     {
         // Eloquentモデルとして注文を取得
         $orderModel = OrderModel::with(['orderItems' => function($query) {
             $query->orderBy('created_at');
-        }])->findOrFail($orderId);
+        }])->findOrFail($requestDto->getOrderId());
 
         // 注文商品の変換
         $orderItems = new OrderItems(
@@ -99,10 +93,10 @@ class OrderShowUseCase
             'cancelled' => 'キャンセル',
         ];
 
-        return [
-            'order' => $orderModel, // ビューで使用するためにEloquentモデルを返す
-            'tax_amounts_by_rate' => $taxAmountsByRate,
-            'statuses' => $statuses,
-        ];
+        return new OrderShowResponseDto(
+            $orderModel,
+            $taxAmountsByRate,
+            $statuses
+        );
     }
 } 

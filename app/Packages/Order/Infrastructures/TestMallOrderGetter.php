@@ -66,12 +66,20 @@ class TestMallOrderGetter implements OrderGetterInterface
         ],
     ];
 
-    public function getRecentOrders(): Orders
+    /**
+     * 注文一覧を取得
+     * 
+     * @param int $fromDays 取得開始日（n日前）
+     * @param int $toDays 取得終了日（n日前）
+     * @param int $limit 取得件数
+     * @return Orders
+     */
+    public function getOrders(int $fromDays = 30, int $toDays = 0, int $limit = 10): Orders
     {
         // 日付順に並べるために、先に日付を生成してソート
         $dates = [];
-        for ($i = 0; $i < 10; $i++) {
-            $dates[] = $this->generateRandomDate(30);
+        for ($i = 0; $i < $limit; $i++) {
+            $dates[] = $this->generateRandomDate($fromDays, $toDays);
         }
         usort($dates, fn($a, $b) => $a <=> $b);
 
@@ -264,9 +272,9 @@ class TestMallOrderGetter implements OrderGetterInterface
         return 800; // 通常送料
     }
 
-    private function generateRandomDate(int $days): DateTimeImmutable
+    private function generateRandomDate(int $fromDays, int $toDays): DateTimeImmutable
     {
-        $timestamp = mt_rand(strtotime("-$days days"), time());
+        $timestamp = mt_rand(strtotime("-$fromDays days"), strtotime("-$toDays days"));
         return new DateTimeImmutable("@$timestamp");
     }
 
