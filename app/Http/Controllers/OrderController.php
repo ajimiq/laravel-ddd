@@ -10,6 +10,11 @@ use App\Packages\Order\UseCases\OrderShowUseCase;
 use App\Packages\Order\UseCases\OrderShowReceiptUseCase;
 use App\Packages\Order\UseCases\OrderCancelUseCase;
 use App\Packages\Order\UseCases\OrderIndexUseCase;
+use App\Packages\Order\UseCases\Dtos\OrderIndexRequestDto;
+use App\Packages\Order\UseCases\Dtos\OrderShowRequestDto;
+use App\Packages\Order\UseCases\Dtos\OrderShowReceiptRequestDto;
+use App\Packages\Order\UseCases\Dtos\OrderCancelRequestDto;
+use App\Packages\Order\UseCases\Dtos\OrderCancelResponseDto;
 use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
@@ -27,13 +32,18 @@ class OrderController extends Controller
      */
     public function index(Request $request): View
     {
-        $result = $this->orderIndexUseCase->execute([
-            'status' => $request->status,
-            'ordered_from' => $request->ordered_from,
-            'ordered_to' => $request->ordered_to,
-        ]);
+        // リクエストからDTOを作成
+        $requestDto = new OrderIndexRequestDto(
+            $request->status,
+            $request->ordered_from,
+            $request->ordered_to
+        );
 
-        return view('orders.index', $result);
+        // UseCaseを実行
+        $responseDto = $this->orderIndexUseCase->execute($requestDto);
+
+        // ビューに渡すデータを取得
+        return view('orders.index', $responseDto->toArray());
     }
 
     public function downloadReceipt(string $orderId)
@@ -51,19 +61,28 @@ class OrderController extends Controller
      */
     public function cancel(Request $request, string $orderId): JsonResponse
     {
-        try {
-            $this->orderCancelUseCase->execute(
-                $orderId,
-                $request->input('cancel_reason'),
-                now()->format('Y-m-d H:i:s')
-            );
+        // リクエストからDTOを作成
+        $requestDto = new OrderCancelRequestDto(
+            $orderId,
+            $request->input('cancel_reason'),
+            now()->format('Y-m-d H:i:s')
+        );
 
+        // UseCaseを実行してレスポンスDTOを取得
+        $responseDto = $this->orderCancelUseCase->execute($requestDto);
+
+        // レスポンスDTOの内容に基づいてJSONレスポンスを返す
+        if ($responseDto->isSuccess()) {
             return response()->json([
-                'message' => '注文をキャンセルしました。',
+                'success' => true,
+                'message' => $responseDto->getMessage(),
+                'order_id' => $responseDto->getOrderId()
             ]);
-        } catch (\RuntimeException $e) {
+        } else {
             return response()->json([
-                'message' => $e->getMessage(),
+                'success' => false,
+                'message' => $responseDto->getMessage(),
+                'order_id' => $responseDto->getOrderId()
             ], 400);
         }
     }
@@ -81,14 +100,14 @@ class OrderController extends Controller
         //     return back()->with('error', '決済待ちの注文の領収書は表示できません。');
         // }
 
-        $result = $this->orderShowReceiptUseCase->execute($orderId);
+        // リクエストからDTOを作成
+        $requestDto = new OrderShowReceiptRequestDto($orderId);
+
+        // UseCaseを実行
+        $responseDto = $this->orderShowReceiptUseCase->execute($requestDto);
         
-        return view('orders.receipt', [
-            'order' => $result['order'],
-            'company' => $result['company'],
-            'receipt' => $result['receipt'],
-            'taxAmountsByRate' => $result['tax_amounts_by_rate'],
-        ]);
+        // ビューに渡すデータを取得
+        return view('orders.receipt', $responseDto->toArray());
     }
 
     /**
@@ -96,12 +115,13 @@ class OrderController extends Controller
      */
     public function showDetail(string $orderId): View
     {
-        $result = $this->orderShowUseCase->execute($orderId);
+        // リクエストからDTOを作成
+        $requestDto = new OrderShowRequestDto($orderId);
 
-        return view('orders.show', [
-            'order' => $result['order'],
-            'taxAmountsByRate' => $result['tax_amounts_by_rate'],
-            'statuses' => $result['statuses'],
-        ]);
+        // UseCaseを実行
+        $responseDto = $this->orderShowUseCase->execute($requestDto);
+
+        // ビューに渡すデータを取得
+        return view('orders.show', $responseDto->toArray());
     }
 } 

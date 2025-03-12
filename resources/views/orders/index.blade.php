@@ -131,7 +131,7 @@
                                 </a>
 
                                 {{-- 領収書リンク --}}
-                                @if($order->status !== 'pending')
+                                @if($order->status === 'unshipped')
                                 <a href="{{ route('orders.receipt', $order->order_id) }}" 
                                    class="text-blue-600 hover:text-blue-900"
                                    target="_blank">

@@ -38,12 +38,8 @@
 │       │   │   ├── Services/ -> ドメインサービス
 │       │   │   ├── ValueObjects/ -> 値オブジェクト
 │       │   ├── Infrastructures/ -> インフラ層（DB読み書き、外部連携）
-│       │   │   ├── OrderRepository.php
-│       │   │   └── TestMallOrderGetter.php
 │       │   └── UseCases/ -> ユースケース層
-│       │       ├── OrderShowUseCase.php
-│       │       ├── OrderShowReceiptUseCase.php
-│       │       └── OrderReceiveUseCase.php
+│       │       └── Dtos/ -> DTO
 │       └── Shared/ -> コンテキストで共有するドメインをこの配下で管理
 │           └── Domains/
 │               └── ValueObjects/│
@@ -77,6 +73,13 @@ php artisan command:receiveTestMallOrderBatch
 ```
 
 ※ランダムで10件ほど取得できる。追加取得した場合は再度実行する。
+
+引数で注文日の期間と件数を指定できる。  
+以下の例は注文日が100日前～30日の20取得となる。  
+（省略時は注文日が30日～0日前で10件となる）
+```bash
+php artisan command:receiveTestMallOrderBatch --from=100 --to=30 --limit=20
+```
 
 ### laravelを起動する
 
