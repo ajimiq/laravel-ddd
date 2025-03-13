@@ -2,7 +2,7 @@
 
 namespace App\Packages\Order\UseCases;
 
-use App\Packages\Order\Domains\ValueObjects\Order;
+use App\Packages\Order\Domains\Entities\Order;
 use App\Packages\Order\Domains\OrderGetterInterface;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
 use App\Packages\Order\UseCases\Dtos\OrderReceiveRequestDto;

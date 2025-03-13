@@ -4,7 +4,6 @@ namespace App\Packages\Order\UseCases;
 
 use App\Models\Order;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
-use App\Packages\Order\Domains\ValueObjects\OrderId;
 use App\Packages\Order\UseCases\Dtos\OrderCancelRequestDto;
 use App\Packages\Order\UseCases\Dtos\OrderCancelResponseDto;
 use Exception;

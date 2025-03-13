@@ -2,8 +2,8 @@
 
 namespace App\Packages\Order\Domains;
 
-use App\Packages\Order\Domains\ValueObjects\Order;
-use App\Packages\Order\Domains\ValueObjects\Orders;
+use App\Packages\Order\Domains\Entities\Order;
+use App\Packages\Order\Domains\Entities\Orders;
 use App\Packages\Order\Domains\ValueObjects\OrderId;
 use Illuminate\Pagination\LengthAwarePaginator;
 

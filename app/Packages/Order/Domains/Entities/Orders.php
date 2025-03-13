@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Packages\Order\Domains\ValueObjects;
+namespace App\Packages\Order\Domains\Entities;
 
 use Iterator;
 use Countable;
 use ArrayAccess;
-use App\Packages\Order\Domains\ValueObjects\Order;
+use App\Packages\Order\Domains\Entities\Order;
 
 class Orders implements Iterator, Countable, ArrayAccess
 {
