@@ -1,6 +1,10 @@
 <?php
 
-namespace App\Packages\Order\Domains\ValueObjects;
+namespace App\Packages\Order\Domains\Entities;
+
+use App\Packages\Order\Domains\ValueObjects\OrderItemId;
+use App\Packages\Order\Domains\ValueObjects\OrderItemName;
+use App\Packages\Order\Domains\ValueObjects\OrderItemPrice;
 
 class OrderItem
 {

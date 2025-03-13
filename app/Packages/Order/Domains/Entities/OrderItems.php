@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Packages\Order\Domains\ValueObjects;
+namespace App\Packages\Order\Domains\Entities;
 
 use Iterator;
 

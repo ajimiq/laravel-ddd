@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Packages\Order\Domains\ValueObjects;
+namespace App\Packages\Order\Domains\Entities;
 
 use DateTimeImmutable;
+use App\Packages\Order\Domains\Entities\OrderItems;
 use App\Packages\Order\Domains\ValueObjects\OrderId;
 use App\Packages\Order\Domains\ValueObjects\OrderStatus;
 use App\Packages\Order\Domains\ValueObjects\ShippingFee;
 use App\Packages\Order\Domains\ValueObjects\OrderCustomerInfo;
-use App\Packages\Order\Domains\ValueObjects\OrderItems;
 use App\Packages\Shared\Domains\ValueObjects\EcSiteCode;
 
 class Order
@@ -96,22 +96,6 @@ class Order
     }
 
     /**
-     * 登録日時を取得
-     */
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * 更新日時を取得
-     */
-    public function getUpdatedAt(): ?DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    /**
      * キャンセル日時を取得
      */
     public function getCanceledAt(): ?DateTimeImmutable
@@ -133,23 +117,6 @@ class Order
     public function isFailure(): bool
     {
         return $this->status->isFailure();
-    }
-
-    // /**
-    //  * 分割可能かどうかを確認
-    //  */
-    // public function isDividable(): bool
-    // {
-    //     return $this->amount->isDividable() && $this->itemList->isDividable();
-    // }
-
-    /**
-     * ステータスを更新
-     */
-    public function updateStatus(OrderStatus $newStatus): void
-    {
-        $this->status = $newStatus;
-        $this->updatedAt = new DateTimeImmutable();
     }
 
     /**
@@ -206,4 +173,56 @@ class Order
         ];
     }
 
+    /**
+     * 消費税率ごとの税額を取得
+     * 
+     * @return array<float, array{
+     *   tax_rate: float,
+     *   subtotal_with_tax: int,
+     *   subtotal_without_tax: int,
+     *   tax_amount: int
+     * }>
+     */
+    public function getTaxAmountsByRate(): array
+    {
+        // 商品の税額を税率ごとに集計
+        $itemTaxes = [];
+        foreach ($this->getOrderItems() as $item) {
+            $taxRate = (string)$item->getPrice()->getTaxRate();
+            if (!isset($itemTaxes[$taxRate])) {
+                $itemTaxes[$taxRate] = [
+                    'tax_rate' => $taxRate,
+                    'subtotal_with_tax' => 0,
+                    'subtotal_without_tax' => 0,
+                    'tax_amount' => 0,
+                ];
+            }
+            
+            $itemTaxes[$taxRate]['subtotal_with_tax'] += $item->getSubtotalWithTax();
+            $itemTaxes[$taxRate]['subtotal_without_tax'] += $item->getSubtotalWithoutTax();
+            $itemTaxes[$taxRate]['tax_amount'] += $item->getTaxAmount();
+        }
+
+        // 送料の税額を追加
+        $shippingFee = $this->getShippingFee();
+        $shippingTaxRate = (string)$shippingFee->getTaxRate();
+        if (!isset($itemTaxes[$shippingTaxRate])) {
+            $itemTaxes[$shippingTaxRate] = [
+                'tax_rate' => $shippingTaxRate,
+                'subtotal_with_tax' => 0,
+                'subtotal_without_tax' => 0,
+                'tax_amount' => 0,
+            ];
+        }
+        
+        $itemTaxes[$shippingTaxRate]['subtotal_with_tax'] += $shippingFee->getPriceWithTax();
+        $itemTaxes[$shippingTaxRate]['subtotal_without_tax'] += $shippingFee->getPriceWithoutTax();
+        $itemTaxes[$shippingTaxRate]['tax_amount'] += 
+            $shippingFee->getPriceWithTax() - $shippingFee->getPriceWithoutTax();
+
+        // 税率の昇順でソート
+        ksort($itemTaxes);
+
+        return $itemTaxes;
+    }
 } 

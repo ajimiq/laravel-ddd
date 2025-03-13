@@ -4,14 +4,13 @@ namespace App\Packages\Order\UseCases;
 
 use App\Models\Order as OrderModel;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
-use App\Packages\Order\Domains\Services\InvoiceService;
-use App\Packages\Order\Domains\ValueObjects\Order;
+use App\Packages\Order\Domains\Entities\Order;
+use App\Packages\Order\Domains\Entities\OrderItem;
+use App\Packages\Order\Domains\Entities\OrderItems;
 use App\Packages\Order\Domains\ValueObjects\OrderId;
 use App\Packages\Order\Domains\ValueObjects\OrderStatus;
 use App\Packages\Order\Domains\ValueObjects\ShippingFee;
 use App\Packages\Order\Domains\ValueObjects\OrderCustomerInfo;
-use App\Packages\Order\Domains\ValueObjects\OrderItems;
-use App\Packages\Order\Domains\ValueObjects\OrderItem;
 use App\Packages\Order\Domains\ValueObjects\OrderItemId;
 use App\Packages\Order\Domains\ValueObjects\OrderItemName;
 use App\Packages\Order\Domains\ValueObjects\OrderItemPrice;
@@ -24,8 +23,7 @@ use Illuminate\Support\Facades\Config;
 class OrderShowReceiptUseCase
 {
     public function __construct(
-        private readonly OrderRepositoryInterface $orderRepository,
-        private readonly InvoiceService $invoiceService
+        private readonly OrderRepositoryInterface $orderRepository
     ) {
     }
 
@@ -81,7 +79,7 @@ class OrderShowReceiptUseCase
         );
 
         // 税率ごとの金額を取得
-        $taxAmountsByRate = $this->invoiceService->getTaxAmountsByRate($order);
+        $taxAmountsByRate = $order->getTaxAmountsByRate($order);
 
         // 会社情報
         $company = [

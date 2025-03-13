@@ -2,7 +2,6 @@
 
 namespace App\Packages\Order\UseCases;
 
-use App\Models\Order as OrderModel;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
 use App\Packages\Order\UseCases\Dtos\OrderIndexRequestDto;
 use App\Packages\Order\UseCases\Dtos\OrderIndexResponseDto;

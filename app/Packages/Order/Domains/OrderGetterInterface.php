@@ -2,7 +2,7 @@
 
 namespace App\Packages\Order\Domains;
 
-use App\Packages\Order\Domains\ValueObjects\Orders;
+use App\Packages\Order\Domains\Entities\Orders;
 
 interface OrderGetterInterface
 {

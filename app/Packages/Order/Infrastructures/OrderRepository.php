@@ -5,13 +5,13 @@ namespace App\Packages\Order\Infrastructures;
 use App\Models\Order as OrderModel;
 use App\Models\OrderItem as OrderItemModel;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
-use App\Packages\Order\Domains\ValueObjects\Order;
-use App\Packages\Order\Domains\ValueObjects\Orders;
+use App\Packages\Order\Domains\Entities\Order;
+use App\Packages\Order\Domains\Entities\Orders;
+use App\Packages\Order\Domains\Entities\OrderItem;
+use App\Packages\Order\Domains\Entities\OrderItems;
 use App\Packages\Order\Domains\ValueObjects\OrderId;
 use App\Packages\Order\Domains\ValueObjects\OrderStatus;
 use App\Packages\Order\Domains\ValueObjects\OrderCustomerInfo;
-use App\Packages\Order\Domains\ValueObjects\OrderItem;
-use App\Packages\Order\Domains\ValueObjects\OrderItems;
 use App\Packages\Order\Domains\ValueObjects\OrderItemId;
 use App\Packages\Order\Domains\ValueObjects\OrderItemName;
 use App\Packages\Order\Domains\ValueObjects\OrderItemPrice;
@@ -48,8 +48,8 @@ class OrderRepository implements OrderRepositoryInterface
                     'total_amount_with_tax' => $order->getTotalAmountWithTax(),
                     'total_amount_without_tax' => $order->getTotalAmountWithoutTax(),
                     'ordered_at' => $order->getOrderedAt(),
-                    'updated_at' => $order->getUpdatedAt(),
-                    'created_at' => $order->getCreatedAt(),
+                    'updated_at' => now(),
+                    'created_at' => now(),
                 ]
             );
 
@@ -65,7 +65,7 @@ class OrderRepository implements OrderRepositoryInterface
                         'price_tax_rate' => $item->getPrice()->getTaxRate(),
                         'quantity' => $item->getQuantity(),
                         'created_at' => $order->getOrderedAt(),
-                        'updated_at' => $order->getUpdatedAt(),
+                        'updated_at' => now(),
                     ]
                 );
             }

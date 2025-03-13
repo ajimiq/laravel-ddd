@@ -3,10 +3,10 @@
 namespace App\Packages\Order\Infrastructures;
 
 use App\Packages\Order\Domains\OrderGetterInterface;
-use App\Packages\Order\Domains\ValueObjects\Order;
-use App\Packages\Order\Domains\ValueObjects\Orders;
-use App\Packages\Order\Domains\ValueObjects\OrderItem;
-use App\Packages\Order\Domains\ValueObjects\OrderItems;
+use App\Packages\Order\Domains\Entities\Order;
+use App\Packages\Order\Domains\Entities\Orders;
+use App\Packages\Order\Domains\Entities\OrderItem;
+use App\Packages\Order\Domains\Entities\OrderItems;
 use App\Packages\Order\Domains\ValueObjects\OrderItemPrice;
 use App\Packages\Order\Domains\ValueObjects\OrderId;
 use App\Packages\Order\Domains\ValueObjects\OrderStatus;
