@@ -122,6 +122,6 @@ class OrderController extends Controller
         $responseDto = $this->orderShowUseCase->execute($requestDto);
 
         // ビューに渡すデータを取得
-        return view('orders.show', $responseDto->toArray());
+        return view('orders.detail', $responseDto->toArray());
     }
 } 
