@@ -15,4 +15,4 @@ Route::get('/', function () {
 Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 Route::get('/orders/{orderId}/receipt', [OrderController::class, 'showReceipt'])->name('orders.receipt');
 Route::patch('/orders/{orderId}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
-Route::get('/orders/{orderId}', [OrderController::class, 'showDetail'])->name('orders.show');
+Route::get('/orders/{orderId}', [OrderController::class, 'showDetail'])->name('orders.detail');
