@@ -11,7 +11,7 @@ class OrderStatus
         'unshipped',
         'completed',
         'failed',
-        'cancelled',
+        'canceled',
     ];
 
     private string $value;
