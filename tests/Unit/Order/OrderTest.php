@@ -213,7 +213,7 @@ class OrderTest extends TestCase
         $canceledOrder = new Order(
             new OrderId('Order-20240316-002'),
             new EcSiteCode('TEST-MALL'),
-            new OrderStatus('cancelled'),
+            new OrderStatus('canceled'),
             $this->orderedAt,
             $this->shippingFee,
             $this->customerInfo,
@@ -283,7 +283,7 @@ class OrderTest extends TestCase
             'unshipped' => false,
             'completed' => false,
             'failed' => true, // isFailureがtrue
-            'cancelled' => false,
+            'canceled' => false,
         ];
         
         foreach ($statuses as $statusValue => $expectedFailure) {

@@ -46,7 +46,7 @@ class OrderCancelUseCase
 
                 // 注文をキャンセル
                 $order->update([
-                    'status' => 'cancelled',
+                    'status' => 'canceled',
                     'canceled_at' => now(),
                     'cancel_reason' => $requestDto->getCancelReason(),
                 ]);

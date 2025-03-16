@@ -10,12 +10,12 @@ class OrderCancelRequestDto
     /**
      * @param string $orderId 注文ID
      * @param string $cancelReason キャンセル理由
-     * @param string $cancelledAt キャンセル日時
+     * @param string $canceledAt キャンセル日時
      */
     public function __construct(
         private readonly string $orderId,
         private readonly string $cancelReason,
-        private readonly string $cancelledAt
+        private readonly string $canceledAt
     ) {
     }
 
@@ -44,8 +44,8 @@ class OrderCancelRequestDto
      *
      * @return string
      */
-    public function getCancelledAt(): string
+    public function getCanceledAt(): string
     {
-        return $this->cancelledAt;
+        return $this->canceledAt;
     }
 } 
