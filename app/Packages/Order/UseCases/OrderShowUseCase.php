@@ -88,7 +88,7 @@ class OrderShowUseCase
             'failed' => '失敗',
             'unshipped' => '決済待ち',
             'shipped' => '発送済み',
-            'cancelled' => 'キャンセル',
+            'canceled' => 'キャンセル',
         ];
 
         return new OrderShowResponseDto(

@@ -33,7 +33,7 @@ class OrderIndexUseCase
         // ステータス一覧
         $statuses = [
             'pending' => '保留中',
-            'cancelled' => 'キャンセル',
+            'canceled' => 'キャンセル',
             'unshipped' => '未発送',
         ];
 
