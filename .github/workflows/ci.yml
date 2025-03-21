@@ -51,7 +51,7 @@ jobs:
     - name: PHP Code Style (phpcs)
       run: |
         composer require --dev squizlabs/php_codesniffer
-        vendor/bin/phpcs --standard=PSR12 app tests
+        vendor/bin/phpcs --standard=phpcs.xml app tests
 
     - name: Static Analysis (PHPStan)
       run: |
