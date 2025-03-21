@@ -9,7 +9,15 @@
         <exclude name="PSR1.Methods.CamelCapsMethodName"/>
         <exclude-pattern>/tests/*</exclude-pattern>
     </rule>
-    
+
+    <!-- 行の長さ制限を緩和（例：150文字に設定） -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="150"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+    </rule>
+
     <!-- testsディレクトリだけにキャメルケース以外のルールを適用したい場合 -->
     <!-- <rule ref="PSR12.Files">
         <exclude-pattern>/tests/*</exclude-pattern>
