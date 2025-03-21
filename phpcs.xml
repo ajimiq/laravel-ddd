@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<ruleset name="CustomRuleset">
+    <!-- PSR12を基本ルールとして適用 -->
+    <rule ref="PSR12" />
+
+    <!-- testsディレクトリに対する特別なルール -->
+    <rule ref="PSR12">
+        <!-- testsディレクトリではメソッド名のキャメルケースルールを無視 -->
+        <exclude name="PSR1.Methods.CamelCapsMethodName"/>
+        <exclude-pattern>/tests/*</exclude-pattern>
+    </rule>
+    
+    <!-- testsディレクトリだけにキャメルケース以外のルールを適用したい場合 -->
+    <!-- <rule ref="PSR12.Files">
+        <exclude-pattern>/tests/*</exclude-pattern>
+    </rule> -->
+    
+    <!-- その他のディレクトリやファイルをスキャン対象に設定 -->
+    <file>app</file>
+    <file>tests</file>
+    
+    <!-- 必要に応じて除外するディレクトリやファイル -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+</ruleset>
