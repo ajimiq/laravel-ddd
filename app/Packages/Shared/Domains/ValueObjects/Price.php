@@ -70,8 +70,8 @@ class Price
     public function getTaxAmount(): int
     {
         $taxAmount = $this->priceWithoutTax * $this->taxRate;
-        
-        return match($this->roundingMode) {
+
+        return match ($this->roundingMode) {
             self::ROUNDING_MODE_CEIL => (int) ceil($taxAmount),
             self::ROUNDING_MODE_FLOOR => (int) floor($taxAmount),
             default => (int) round($taxAmount),

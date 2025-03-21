@@ -257,7 +257,7 @@ class OrderRepository implements OrderRepositoryInterface
     public function searchOrders(array $searchParams, int $perPage): LengthAwarePaginator
     {
         $query = OrderModel::query()->with('orderItems');
-        
+
         // ステータスで絞り込み
         if (!empty($searchParams['status'])) {
             $query->where('status', $searchParams['status']);
@@ -277,4 +277,4 @@ class OrderRepository implements OrderRepositoryInterface
         // ページネーション
         return $query->paginate($perPage)->withQueryString();
     }
-} 
+}

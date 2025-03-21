@@ -90,4 +90,4 @@ class OrderItem extends Model
     {
         return $this->price - $this->getPriceWithoutTax();
     }
-} 
+}

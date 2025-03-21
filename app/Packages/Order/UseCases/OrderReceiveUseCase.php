@@ -7,7 +7,6 @@ use App\Packages\Order\Domains\OrderGetterInterface;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
 use App\Packages\Order\UseCases\Dtos\OrderReceiveRequestDto;
 use App\Packages\Order\UseCases\Dtos\OrderReceiveResponseDto;
-
 use Illuminate\Support\Facades\Log;
 
 class OrderReceiveUseCase
@@ -22,7 +21,7 @@ class OrderReceiveUseCase
 
     /**
      * 注文情報を取得して処理する
-     * 
+     *
      * @param OrderReceiveRequestDto $requestDto
      * @return OrderReceiveResponseDto
      */
@@ -67,7 +66,7 @@ class OrderReceiveUseCase
 
     /**
      * 注文を処理する
-     * 
+     *
      * @param Order $order
      * @return array{success: bool, message: string}
      */
@@ -104,8 +103,9 @@ class OrderReceiveUseCase
                 'message' => sprintf("注文保存成功: %s", $order->getOrderId()->getValue())
             ];
         } catch (\Exception $e) {
-            $errorMessage = sprintf("注文保存失敗: %s エラー: %s", 
-                $order->getOrderId()->getValue(), 
+            $errorMessage = sprintf(
+                "注文保存失敗: %s エラー: %s",
+                $order->getOrderId()->getValue(),
                 $e->getMessage()
             );
             echo $errorMessage . "\n";

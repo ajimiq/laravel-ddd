@@ -64,4 +64,4 @@ interface OrderRepositoryInterface
      * @return void
      */
     public function delete(OrderId $orderId): void;
-} 
+}

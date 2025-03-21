@@ -44,4 +44,4 @@ class OrderCustomerInfo
             'address' => $this->address,
         ];
     }
-} 
+}

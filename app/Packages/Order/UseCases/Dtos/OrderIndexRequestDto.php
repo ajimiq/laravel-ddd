@@ -74,4 +74,4 @@ class OrderIndexRequestDto
     {
         return $this->perPage;
     }
-} 
+}

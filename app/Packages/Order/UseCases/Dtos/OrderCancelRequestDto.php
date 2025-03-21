@@ -48,4 +48,4 @@ class OrderCancelRequestDto
     {
         return $this->canceledAt;
     }
-} 
+}

@@ -18,7 +18,6 @@ use App\Packages\Order\UseCases\Dtos\OrderShowRequestDto;
 use App\Packages\Order\UseCases\Dtos\OrderShowResponseDto;
 use App\Packages\Shared\Domains\ValueObjects\EcSiteCode;
 use DateTimeImmutable;
-
 use Illuminate\Support\Facades\Log;
 
 class OrderShowUseCase
@@ -30,14 +29,14 @@ class OrderShowUseCase
 
     /**
      * 注文詳細を取得
-     * 
+     *
      * @param OrderShowRequestDto $requestDto
      * @return OrderShowResponseDto
      */
     public function execute(OrderShowRequestDto $requestDto): OrderShowResponseDto
     {
         // Eloquentモデルとして注文を取得
-        $orderModel = OrderModel::with(['orderItems' => function($query) {
+        $orderModel = OrderModel::with(['orderItems' => function ($query) {
             $query->orderBy('created_at');
         }])->findOrFail($requestDto->getOrderId());
 
@@ -97,4 +96,4 @@ class OrderShowUseCase
             $statuses
         );
     }
-} 
+}

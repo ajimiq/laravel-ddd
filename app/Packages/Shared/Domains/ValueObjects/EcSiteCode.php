@@ -24,4 +24,4 @@ class EcSiteCode
     {
         return $this->value === $other->value;
     }
-} 
+}

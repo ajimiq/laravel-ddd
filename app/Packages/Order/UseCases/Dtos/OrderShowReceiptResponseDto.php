@@ -105,4 +105,4 @@ class OrderShowReceiptResponseDto
             'taxAmountsByRate' => $this->taxAmountsByRate,
         ];
     }
-} 
+}

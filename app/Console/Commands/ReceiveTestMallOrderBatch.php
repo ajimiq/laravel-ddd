@@ -70,7 +70,7 @@ class ReceiveTestMallOrderBatch extends Command
 
         // 処理結果の表示
         $this->info($responseDto->getSummary());
-        
+
         if ($responseDto->getErrorCount() > 0) {
             $this->error("エラーが発生しました:");
             foreach ($responseDto->getErrorMessages() as $errorMessage) {

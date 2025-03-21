@@ -46,4 +46,4 @@ class OrderItemPrice extends Price
     ): self {
         return new self($priceWithoutTax, 0.00, $roundingMode);
     }
-} 
+}

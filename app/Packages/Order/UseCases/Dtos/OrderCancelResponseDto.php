@@ -62,4 +62,4 @@ class OrderCancelResponseDto
             'order_id' => $this->orderId,
         ];
     }
-} 
+}

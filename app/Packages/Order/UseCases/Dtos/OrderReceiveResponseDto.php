@@ -90,4 +90,4 @@ class OrderReceiveResponseDto
             'error_messages' => $this->errorMessages,
         ];
     }
-} 
+}

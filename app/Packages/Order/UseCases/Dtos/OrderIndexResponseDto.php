@@ -72,4 +72,4 @@ class OrderIndexResponseDto
             'search' => $this->search,
         ];
     }
-} 
+}

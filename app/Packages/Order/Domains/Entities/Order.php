@@ -175,7 +175,7 @@ class Order
 
     /**
      * 消費税率ごとの税額を取得
-     * 
+     *
      * @return array<float, array{
      *   tax_rate: float,
      *   subtotal_with_tax: int,
@@ -197,7 +197,7 @@ class Order
                     'tax_amount' => 0,
                 ];
             }
-            
+
             $itemTaxes[$taxRate]['subtotal_with_tax'] += $item->getSubtotalWithTax();
             $itemTaxes[$taxRate]['subtotal_without_tax'] += $item->getSubtotalWithoutTax();
             $itemTaxes[$taxRate]['tax_amount'] += $item->getTaxAmount();
@@ -214,10 +214,10 @@ class Order
                 'tax_amount' => 0,
             ];
         }
-        
+
         $itemTaxes[$shippingTaxRate]['subtotal_with_tax'] += $shippingFee->getPriceWithTax();
         $itemTaxes[$shippingTaxRate]['subtotal_without_tax'] += $shippingFee->getPriceWithoutTax();
-        $itemTaxes[$shippingTaxRate]['tax_amount'] += 
+        $itemTaxes[$shippingTaxRate]['tax_amount'] +=
             $shippingFee->getPriceWithTax() - $shippingFee->getPriceWithoutTax();
 
         // 税率の昇順でソート
@@ -225,4 +225,4 @@ class Order
 
         return $itemTaxes;
     }
-} 
+}

@@ -30,4 +30,4 @@ interface OrderGetterInterface
     //  * @return Order
     //  */
     // public function next(): Order;
-} 
+}

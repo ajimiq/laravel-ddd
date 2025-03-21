@@ -17,7 +17,7 @@ class OrderCancelUseCase
 {
     /**
      * コンストラクタ
-     * 
+     *
      * @param OrderRepositoryInterface $orderRepository
      */
     public function __construct(
@@ -27,7 +27,7 @@ class OrderCancelUseCase
 
     /**
      * 注文をキャンセル
-     * 
+     *
      * @param OrderCancelRequestDto $requestDto
      * @return OrderCancelResponseDto
      */
@@ -35,7 +35,6 @@ class OrderCancelUseCase
     {
         DB::transaction(function () use ($requestDto) {
             try {
-
                 // 注文を取得
                 $order = Order::lockForUpdate()->findOrFail($requestDto->getOrderId());
 
@@ -65,4 +64,4 @@ class OrderCancelUseCase
             $requestDto->getOrderId()
         );
     }
-} 
+}

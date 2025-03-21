@@ -31,7 +31,7 @@ class OrderTest extends TestCase
 
         $this->orderedAt = new DateTimeImmutable('2024-03-16 10:00:00');
         $this->createdAt = new DateTimeImmutable('2024-03-16 10:00:00');
-        
+
         // OrderItemsのモックを作成
         $this->orderItems = $this->createStub(OrderItems::class);
         $this->shippingFee = new ShippingFee(800, 0.1);
@@ -58,7 +58,7 @@ class OrderTest extends TestCase
     {
         $this->assertTrue($this->order->isPending());
         $this->assertFalse($this->order->isFailure());
-        
+
         // 失敗ステータスの注文を作成して検証
         $failedOrder = new Order(
             new OrderId('Order-20240316-002'),
@@ -70,7 +70,7 @@ class OrderTest extends TestCase
             $this->orderItems,
             $this->createdAt
         );
-        
+
         $this->assertFalse($failedOrder->isPending());
         $this->assertTrue($failedOrder->isFailure());
     }
@@ -123,7 +123,7 @@ class OrderTest extends TestCase
     public function test_顧客情報が正しく取得できる(): void
     {
         $customerInfo = $this->order->getCustomerInfo();
-        
+
         $this->assertEquals('仮テスト太郎', $customerInfo->getName());
         $this->assertEquals('test.taro@example.com', $customerInfo->getEmail());
         $this->assertEquals('090-1234-5678', $customerInfo->getPhoneNumber());
@@ -133,7 +133,7 @@ class OrderTest extends TestCase
     public function test_送料が正しく取得できる(): void
     {
         $shippingFee = $this->order->getShippingFee();
-        
+
         $this->assertEquals(800, $shippingFee->getPriceWithoutTax());
         $this->assertEquals(880, $shippingFee->getPriceWithTax());
         $this->assertEquals(0.1, $shippingFee->getTaxRate());
@@ -162,7 +162,7 @@ class OrderTest extends TestCase
 
         // 送料が無料であることを確認
         $this->assertTrue($orderWithFreeShipping->getShippingFee()->isFree());
-        
+
         // 注文合計が商品小計と等しいことを確認
         $this->assertEquals(1100, $orderWithFreeShipping->getTotalAmountWithTax());
         $this->assertEquals(1000, $orderWithFreeShipping->getTotalAmountWithoutTax());
@@ -192,7 +192,7 @@ class OrderTest extends TestCase
             ]);
 
         $orderArray = $this->order->toArray();
-        
+
         $this->assertIsArray($orderArray);
         $this->assertEquals('Order-20240316-001', $orderArray['order_id']);
         $this->assertEquals('TEST-MALL', $orderArray['ec_site_code']);
@@ -207,7 +207,7 @@ class OrderTest extends TestCase
     {
         // キャンセル日時がnullの場合
         $this->assertNull($this->order->getCanceledAt());
-        
+
         // キャンセル日時がある場合
         $canceledAt = new DateTimeImmutable('2024-03-17 10:00:00');
         $canceledOrder = new Order(
@@ -222,7 +222,7 @@ class OrderTest extends TestCase
             null,
             $canceledAt
         );
-        
+
         $this->assertEquals(
             '2024-03-17 10:00:00',
             $canceledOrder->getCanceledAt()->format('Y-m-d H:i:s')
@@ -238,16 +238,16 @@ class OrderTest extends TestCase
             new OrderItemPrice(1000, 0.1), // 税抜1000円、税率10%
             1
         );
-        
+
         $item2 = new OrderItem(
             new OrderItemId('item-002'),
             new OrderItemName('軽減税率商品'),
             OrderItemPrice::withReducedTaxRate(2000), // 税抜2000円、税率8%
             1
         );
-        
+
         $realOrderItems = new OrderItems([$item1, $item2]);
-        
+
         $orderWithRealItems = new Order(
             new OrderId('Order-20240316-003'),
             new EcSiteCode('TEST-MALL'),
@@ -258,16 +258,16 @@ class OrderTest extends TestCase
             $realOrderItems,
             $this->createdAt
         );
-        
+
         $taxAmountsByRate = $orderWithRealItems->getTaxAmountsByRate();
-        
+
         // 税率8%の集計
         $this->assertArrayHasKey('0.08', $taxAmountsByRate);
         $this->assertEquals(0.08, $taxAmountsByRate['0.08']['tax_rate']);
         $this->assertEquals(2160, $taxAmountsByRate['0.08']['subtotal_with_tax']); // 2000 * 1.08
         $this->assertEquals(2000, $taxAmountsByRate['0.08']['subtotal_without_tax']);
         $this->assertEquals(160, $taxAmountsByRate['0.08']['tax_amount']); // 2160 - 2000
-        
+
         // 税率10%の集計（商品 + 送料）
         $this->assertArrayHasKey('0.1', $taxAmountsByRate);
         $this->assertEquals(0.1, $taxAmountsByRate['0.1']['tax_rate']);
@@ -285,7 +285,7 @@ class OrderTest extends TestCase
             'failed' => true, // isFailureがtrue
             'canceled' => false,
         ];
-        
+
         foreach ($statuses as $statusValue => $expectedFailure) {
             $order = new Order(
                 new OrderId('Order-20240316-' . $statusValue),
@@ -297,13 +297,13 @@ class OrderTest extends TestCase
                 $this->orderItems,
                 $this->createdAt
             );
-            
+
             if ($statusValue === 'pending') {
                 $this->assertTrue($order->isPending(), "ステータス '{$statusValue}' の注文はpendingと判定されるべき");
             } else {
                 $this->assertFalse($order->isPending(), "ステータス '{$statusValue}' の注文はpendingと判定されるべきではない");
             }
-            
+
             if ($statusValue === 'failed') {
                 $this->assertTrue($order->isFailure(), "ステータス '{$statusValue}' の注文はfailureと判定されるべき");
             } else {

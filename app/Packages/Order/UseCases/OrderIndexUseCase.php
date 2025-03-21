@@ -16,7 +16,7 @@ class OrderIndexUseCase
 
     /**
      * 注文一覧を取得
-     * 
+     *
      * @param OrderIndexRequestDto $requestDto
      * @return OrderIndexResponseDto
      */
@@ -47,4 +47,4 @@ class OrderIndexUseCase
             ]
         );
     }
-} 
+}

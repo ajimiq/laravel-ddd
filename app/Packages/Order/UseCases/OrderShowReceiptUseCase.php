@@ -29,14 +29,14 @@ class OrderShowReceiptUseCase
 
     /**
      * 領収書データを取得
-     * 
+     *
      * @param OrderShowReceiptRequestDto $requestDto
      * @return OrderShowReceiptResponseDto
      */
     public function execute(OrderShowReceiptRequestDto $requestDto): OrderShowReceiptResponseDto
     {
         // Eloquentモデルとして注文を取得
-        $orderModel = OrderModel::with(['orderItems' => function($query) {
+        $orderModel = OrderModel::with(['orderItems' => function ($query) {
             $query->orderBy('created_at');
         }])->findOrFail($requestDto->getOrderId());
 
@@ -103,4 +103,4 @@ class OrderShowReceiptUseCase
             $taxAmountsByRate
         );
     }
-} 
+}

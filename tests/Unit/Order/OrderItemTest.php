@@ -123,4 +123,4 @@ class OrderItemTest extends TestCase
         $this->assertEquals(2000, $taxExemptItem->getSubtotalWithoutTax());
         $this->assertEquals(0, $taxExemptItem->getTaxAmount());
     }
-} 
+}

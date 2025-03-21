@@ -32,12 +32,12 @@ class TestMallOrderGetter implements OrderGetterInterface
         'SUPPLEMENT-100' => ['name' => 'サプリメント 100粒', 'price' => 980, 'is_food' => true],
         'SUPPLEMENT-200' => ['name' => 'サプリメント 200粒', 'price' => 1800, 'is_food' => true],
         'CREATINE' => ['name' => 'クレアチン 500g', 'price' => 2980, 'is_food' => true],
-        
+
         // トレーニング用品
         'DUMBBELL' => ['name' => '可変式ダンベル 20kg', 'price' => 15800, 'is_food' => false],
         'YOGA_MAT' => ['name' => 'ヨガマット 10mm', 'price' => 2480, 'is_food' => false],
         'BAND' => ['name' => 'トレーニングバンド 5本セット', 'price' => 1980, 'is_food' => false],
-        
+
         // ウェア
         'SHIRT' => ['name' => '速乾性トレーニングシャツ', 'price' => 2980, 'is_food' => false],
         'PANTS' => ['name' => 'ストレッチトレーニングパンツ', 'price' => 3980, 'is_food' => false],
@@ -68,7 +68,7 @@ class TestMallOrderGetter implements OrderGetterInterface
 
     /**
      * 注文一覧を取得
-     * 
+     *
      * @param int $fromDays 取得開始日（n日前）
      * @param int $toDays 取得終了日（n日前）
      * @param int $limit 取得件数
@@ -96,7 +96,7 @@ class TestMallOrderGetter implements OrderGetterInterface
             $customerInfo = (mt_rand(1, 100) <= 10)
                 ? $this->getRepeaterCustomerInfo()
                 : $this->generateRandomCustomerInfo();
-                
+
             $orderItems = $this->generateRandomOrderItems();
             $shippingFee = new ShippingFee($this->calculateShippingFee($orderItems));
 
@@ -112,23 +112,23 @@ class TestMallOrderGetter implements OrderGetterInterface
                 $updatedAt
             );
         }
-        
+
         return new Orders($orders);
     }
 
     private function generateOrderId(DateTimeImmutable $orderedAt): OrderId
     {
         $dateStr = $orderedAt->format('Ymd');
-        
+
         // その日の注文数をカウントアップ
         if (!isset($this->orderCountByDate[$dateStr])) {
             $this->orderCountByDate[$dateStr] = 0;
         }
         $this->orderCountByDate[$dateStr]++;
-        
+
         // 3桁の連番を生成
         $sequence = str_pad((string)$this->orderCountByDate[$dateStr], 3, '0', STR_PAD_LEFT);
-        
+
         return new OrderId("Order-{$dateStr}-{$sequence}");
     }
 
@@ -137,7 +137,7 @@ class TestMallOrderGetter implements OrderGetterInterface
         $items = [];
         // 確率に基づいて商品数を決定
         $rand = mt_rand(1, 100);
-        $numItems = match(true) {
+        $numItems = match (true) {
             $rand <= 40 => 1,  // 40%
             $rand <= 70 => 2,  // 30%
             $rand <= 85 => 3,  // 15%
@@ -161,7 +161,7 @@ class TestMallOrderGetter implements OrderGetterInterface
         foreach ($selectedProducts as $productKey) {
             $product = $this->products[$productKey];
             $quantity = $this->determineQuantity($product['price']);
-            
+
             $taxRate = $product['is_food'] ? 0.08 : 0.10; // 食品は8%、それ以外は10%
             $items[] = new OrderItem(
                 // new OrderItemId('ITEM-' . str_pad((string)mt_rand(0, 99999), 5, '0', STR_PAD_LEFT)),
@@ -239,7 +239,7 @@ class TestMallOrderGetter implements OrderGetterInterface
             mb_strtolower($this->toRomaji($firstName)) . '.kari' . mb_strtolower($this->toRomaji($lastName)) . '@example.com',
             sprintf('0%d-1234-5678', random_int(1, 9)),
             sprintf(
-                '〒%s-%s %s%s%s%d-%d-%d', 
+                '〒%s-%s %s%s%s%d-%d-%d',
                 str_pad((string)random_int(100, 999), 3, '0', STR_PAD_LEFT),
                 str_pad((string)random_int(0, 9999), 4, '0', STR_PAD_LEFT),
                 ['東京都', '神奈川県', '埼玉県', '千葉県', '茨城県', '栃木県', '群馬県'][array_rand([0,1,2,3,4,5,6])],
@@ -349,7 +349,7 @@ class TestMallOrderGetter implements OrderGetterInterface
 
         // 姓と名の変換テーブルを結合
         $conversion = array_merge($lastNameConversion, $firstNameConversion);
-        
+
         return $conversion[$text] ?? 'dummy'; // 変換できない場合はデフォルト値として'dummy'を返す
     }
 }

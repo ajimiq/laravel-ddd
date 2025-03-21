@@ -13,10 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(OrderGetterInterface::class, function($app) {
+        $this->app->bind(OrderGetterInterface::class, function ($app) {
             return new \App\Packages\Order\Infrastructures\TestMallOrderGetter();
         });
-        $this->app->bind(OrderRepositoryInterface::class, function($app) {
+        $this->app->bind(OrderRepositoryInterface::class, function ($app) {
             return new \App\Packages\Order\Infrastructures\OrderRepository();
         });
     }

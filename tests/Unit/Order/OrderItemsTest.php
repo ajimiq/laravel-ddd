@@ -104,7 +104,7 @@ class OrderItemsTest extends TestCase
 
         $this->assertIsArray($array);
         $this->assertCount(2, $array);
-        
+
         // 商品1の検証
         $this->assertEquals('item-001', $array[0]['item_id']);
         $this->assertEquals('テスト商品1', $array[0]['name']);
@@ -115,7 +115,7 @@ class OrderItemsTest extends TestCase
         $this->assertEquals(2200, $array[0]['subtotal_with_tax']);
         $this->assertEquals(2000, $array[0]['subtotal_without_tax']);
         $this->assertEquals(200, $array[0]['tax_amount']);
-        
+
         // 商品2の検証
         $this->assertEquals('item-002', $array[1]['item_id']);
         $this->assertEquals('テスト商品2', $array[1]['name']);
@@ -158,4 +158,4 @@ class OrderItemsTest extends TestCase
         $this->assertEquals(4000, $orderItems->getSubtotalWithoutTax());
         $this->assertEquals(360, $orderItems->getTotalTaxAmount());
     }
-} 
+}

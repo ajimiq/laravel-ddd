@@ -49,10 +49,10 @@ class OrderController extends Controller
     public function downloadReceipt(string $orderId)
     {
         $order = Order::findOrFail($orderId);
-        
+
         // 領収書のPDF生成処理（実装は省略）
         // return response()->download($pdfPath, "receipt_{$orderId}.pdf");
-        
+
         return back()->with('error', '領収書の出力は準備中です。');
     }
 
@@ -105,7 +105,7 @@ class OrderController extends Controller
 
         // UseCaseを実行
         $responseDto = $this->orderShowReceiptUseCase->execute($requestDto);
-        
+
         // ビューに渡すデータを取得
         return view('orders.receipt', $responseDto->toArray());
     }
@@ -124,4 +124,4 @@ class OrderController extends Controller
         // ビューに渡すデータを取得
         return view('orders.detail', $responseDto->toArray());
     }
-} 
+}

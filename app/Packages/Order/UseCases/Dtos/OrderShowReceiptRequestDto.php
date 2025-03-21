@@ -24,4 +24,4 @@ class OrderShowReceiptRequestDto
     {
         return $this->orderId;
     }
-} 
+}

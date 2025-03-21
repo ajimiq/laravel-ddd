@@ -101,4 +101,4 @@ class Order extends Model
     {
         return $this->belongsTo(EcSite::class, 'ec_site_code', 'code');
     }
-} 
+}

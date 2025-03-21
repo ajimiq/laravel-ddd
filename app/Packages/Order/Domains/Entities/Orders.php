@@ -13,7 +13,7 @@ class Orders implements Iterator, Countable, ArrayAccess
      * @var array<Order>
      */
     private array $orders = [];
-    
+
     private int $position = 0;
 
     public function __construct(array $orders = [])
@@ -109,4 +109,4 @@ class Orders implements Iterator, Countable, ArrayAccess
     {
         return empty($this->orders);
     }
-} 
+}

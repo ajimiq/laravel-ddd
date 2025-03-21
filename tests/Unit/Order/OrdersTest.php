@@ -165,4 +165,4 @@ class OrdersTest extends TestCase
         $this->orders->next();
         $this->assertFalse($this->orders->valid());
     }
-} 
+}

@@ -74,4 +74,4 @@ class OrderShowResponseDto
             'statuses' => $this->statuses,
         ];
     }
-} 
+}
