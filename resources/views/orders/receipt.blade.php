@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>領収書 - {{ $order->order_id }}</title>
+    <title>領収書 - {{ $order['order_id'] }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-white">
@@ -28,15 +28,15 @@
             <div class="text-right">
                 <p class="text-sm">発行日: {{ $receipt['issue_date']->format('Y年m月d日') }}</p>
                 <p class="text-sm">領収書番号: {{ $receipt['number'] }}</p>
-                <p class="text-sm">注文番号: {{ $order->order_id }}</p>
+                <p class="text-sm">注文番号: {{ $order['order_id'] }}</p>
             </div>
         </div>
 
         {{-- 宛名と金額 --}}
         <div class="mb-8">
-            <p class="text-xl mb-4">{{ $order->customer_name }} 様</p>
+            <p class="text-xl mb-4">{{ $order['customer_info']['customer_name'] }} 様</p>
             <div class="border-b-2 border-black text-2xl font-bold py-2">
-                ￥{{ number_format($order->total_amount_with_tax) }}<span class="text-sm ml-2">（税込）</span>
+                ￥{{ number_format($order['total_amount_with_tax']) }}<span class="text-sm ml-2">（税込）</span>
             </div>
         </div>
 
@@ -52,26 +52,26 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($order->orderItems as $item)
+                    @foreach($order['order_items'] as $item)
                         <tr class="border-b">
-                            <td class="py-2">{{ $item->name }}</td>
-                            <td class="py-2 text-right">¥{{ number_format($item->price_with_tax) }}</td>
-                            <td class="py-2 text-right">{{ $item->quantity }}</td>
-                            <td class="py-2 text-right">¥{{ number_format($item->price_with_tax * $item->quantity) }}</td>
+                            <td class="py-2">{{ $item['name'] }}</td>
+                            <td class="py-2 text-right">¥{{ number_format($item['price_with_tax']) }}</td>
+                            <td class="py-2 text-right">{{ $item['quantity'] }}</td>
+                            <td class="py-2 text-right">¥{{ number_format($item['price_with_tax'] * $item['quantity']) }}</td>
                         </tr>
                     @endforeach
                     <tr class="border-b">
                         <td class="py-2">送料</td>
                         <td class="py-2 text-right">-</td>
                         <td class="py-2 text-right">-</td>
-                        <td class="py-2 text-right">¥{{ number_format($order->shipping_fee_with_tax) }}</td>
+                        <td class="py-2 text-right">¥{{ number_format($order['shipping_fee_with_tax']) }}</td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="2" class="py-2"></td>
                         <td class="py-2 text-right font-bold">小計</td>
-                        <td class="py-2 text-right">¥{{ number_format($order->total_amount_without_tax) }}</td>
+                        <td class="py-2 text-right">¥{{ number_format($order['total_amount_without_tax']) }}</td>
                     </tr>
                     {{-- 税率ごとの内訳を表示 --}}
                     @foreach($taxAmountsByRate  as $taxInfo)
@@ -91,7 +91,7 @@
                     <tr class="border-t-2 border-black">
                         <td colspan="2" class="py-2"></td>
                         <td class="py-2 text-right font-bold">合計</td>
-                        <td class="py-2 text-right font-bold">¥{{ number_format($order->total_amount_with_tax) }}</td>
+                        <td class="py-2 text-right font-bold">¥{{ number_format($order['total_amount_with_tax']) }}</td>
                     </tr>
                 </tfoot>
             </table>

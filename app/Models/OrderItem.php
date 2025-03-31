@@ -23,7 +23,7 @@ class OrderItem extends Model
     /**
      * 代入可能な属性
      *
-     * @var array<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'item_id',
@@ -64,7 +64,7 @@ class OrderItem extends Model
      */
     public function getSubtotal(): int
     {
-        return $this->price * $this->quantity;
+        return $this->price_with_tax * $this->quantity;
     }
 
     /**
@@ -72,7 +72,7 @@ class OrderItem extends Model
      */
     public function getTaxRate(): float
     {
-        return $this->is_food ? 0.08 : 0.10;
+        return $this->price_tax_rate;
     }
 
     /**
@@ -80,7 +80,7 @@ class OrderItem extends Model
      */
     public function getPriceWithoutTax(): int
     {
-        return (int)($this->price / (1 + $this->getTaxRate()));
+        return $this->price_without_tax;
     }
 
     /**
@@ -88,6 +88,6 @@ class OrderItem extends Model
      */
     public function getTaxAmount(): int
     {
-        return $this->price - $this->getPriceWithoutTax();
+        return $this->price_with_tax - $this->price_without_tax;
     }
 }

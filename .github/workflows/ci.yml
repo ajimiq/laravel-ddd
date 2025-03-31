@@ -53,9 +53,13 @@ jobs:
         composer require --dev squizlabs/php_codesniffer
         vendor/bin/phpcs --standard=phpcs.xml app tests
 
-    - name: Static Analysis (PHPStan)
+    # - name: Static Analysis (PHPStan)
+    #   run: |
+    #     composer require --dev phpstan/phpstan
+    #     vendor/bin/phpstan analyse app tests --level=5
+    - name: Static Analysis (larastan)
       run: |
-        composer require --dev phpstan/phpstan
+        composer --dev require nunomaduro/larastan
         vendor/bin/phpstan analyse app tests --level=5
 
     - name: Execute tests (Unit and Feature tests) via PHPUnit

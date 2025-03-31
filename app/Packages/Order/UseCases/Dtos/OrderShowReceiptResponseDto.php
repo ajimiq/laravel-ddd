@@ -2,15 +2,38 @@
 
 namespace App\Packages\Order\UseCases\Dtos;
 
-use App\Models\Order;
-
 /**
  * 領収書表示結果DTO
  */
 class OrderShowReceiptResponseDto
 {
     /**
-     * @param Order $order 注文
+     * @param array{
+     *   order_id: string,
+     *   status: string,
+     *   ordered_at: string,
+     *   customer_info: array{
+     *     customer_name: string,
+     *     customer_email: string,
+     *     customer_phone: string,
+     *     customer_address: string
+     *   },
+     *   shipping_fee_with_tax: int,
+     *   shipping_fee_without_tax: int,
+     *   shipping_fee_tax_rate: float,
+     *   total_amount_with_tax: int,
+     *   total_amount_without_tax: int,
+     *   order_items: array<int, array{
+     *     item_id: string,
+     *     name: string,
+     *     price_with_tax: int,
+     *     price_without_tax: int,
+     *     price_tax_rate: float,
+     *     quantity: int,
+     *     subtotal_with_tax: int,
+     *     subtotal_without_tax: int
+     *   }>
+     * } $order 注文データ
      * @param array{
      *   name: string,
      *   postal_code: string,
@@ -22,7 +45,7 @@ class OrderShowReceiptResponseDto
      *   number: string,
      *   issue_date: \DateTimeImmutable
      * } $receipt 領収書情報
-     * @param array<float, array{
+     * @param array<float|string, array{
      *   tax_rate: float,
      *   subtotal_with_tax: int,
      *   subtotal_without_tax: int,
@@ -30,7 +53,7 @@ class OrderShowReceiptResponseDto
      * }> $taxAmountsByRate 税率ごとの金額
      */
     public function __construct(
-        private readonly Order $order,
+        private readonly array $order,
         private readonly array $company,
         private readonly array $receipt,
         private readonly array $taxAmountsByRate
@@ -38,11 +61,11 @@ class OrderShowReceiptResponseDto
     }
 
     /**
-     * 注文を取得
+     * 注文データを取得
      *
-     * @return Order
+     * @return array
      */
-    public function getOrder(): Order
+    public function getOrder(): array
     {
         return $this->order;
     }
@@ -79,7 +102,7 @@ class OrderShowReceiptResponseDto
     /**
      * 税率ごとの金額を取得
      *
-     * @return array<float, array{
+     * @return array<float|string, array{
      *   tax_rate: float,
      *   subtotal_with_tax: int,
      *   subtotal_without_tax: int,
@@ -94,7 +117,7 @@ class OrderShowReceiptResponseDto
     /**
      * ビューに渡すデータを取得
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {

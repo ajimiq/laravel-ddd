@@ -22,7 +22,7 @@ class Order
     private DateTimeImmutable $createdAt;
     private ?DateTimeImmutable $updatedAt;
     private ?DateTimeImmutable $canceledAt;
-
+    private ?string $cancelReason;
     public function __construct(
         OrderId $orderId,
         EcSiteCode $ecSiteCode,
@@ -33,7 +33,8 @@ class Order
         OrderItems $orderItems,
         DateTimeImmutable $createdAt,
         ?DateTimeImmutable $updatedAt = null,
-        ?DateTimeImmutable $canceledAt = null
+        ?DateTimeImmutable $canceledAt = null,
+        ?string $cancelReason = null
     ) {
         $this->orderId = $orderId;
         $this->ecSiteCode = $ecSiteCode;
@@ -45,6 +46,7 @@ class Order
         $this->createdAt = $createdAt;
         $this->updatedAt = $updatedAt;
         $this->canceledAt = $canceledAt;
+        $this->cancelReason = $cancelReason;
     }
 
     /**
@@ -101,6 +103,14 @@ class Order
     public function getCanceledAt(): ?DateTimeImmutable
     {
         return $this->canceledAt;
+    }
+
+    /**
+     * キャンセル理由を取得
+     */
+    public function getCancelReason(): ?string
+    {
+        return $this->cancelReason;
     }
 
     /**
@@ -176,7 +186,7 @@ class Order
     /**
      * 消費税率ごとの税額を取得
      *
-     * @return array<float, array{
+     * @return array<array{
      *   tax_rate: float,
      *   subtotal_with_tax: int,
      *   subtotal_without_tax: int,
@@ -188,41 +198,69 @@ class Order
         // 商品の税額を税率ごとに集計
         $itemTaxes = [];
         foreach ($this->getOrderItems() as $item) {
-            $taxRate = (string)$item->getPrice()->getTaxRate();
-            if (!isset($itemTaxes[$taxRate])) {
-                $itemTaxes[$taxRate] = [
-                    'tax_rate' => $taxRate,
+            $taxRateKey = (string)$item->getPrice()->getTaxRate();
+            if (!isset($itemTaxes[$taxRateKey])) {
+                $itemTaxes[$taxRateKey] = [
+                    'tax_rate' => $item->getPrice()->getTaxRate(),
                     'subtotal_with_tax' => 0,
                     'subtotal_without_tax' => 0,
                     'tax_amount' => 0,
                 ];
             }
 
-            $itemTaxes[$taxRate]['subtotal_with_tax'] += $item->getSubtotalWithTax();
-            $itemTaxes[$taxRate]['subtotal_without_tax'] += $item->getSubtotalWithoutTax();
-            $itemTaxes[$taxRate]['tax_amount'] += $item->getTaxAmount();
+            $itemTaxes[$taxRateKey]['subtotal_with_tax'] += $item->getSubtotalWithTax();
+            $itemTaxes[$taxRateKey]['subtotal_without_tax'] += $item->getSubtotalWithoutTax();
+            $itemTaxes[$taxRateKey]['tax_amount'] += $item->getTaxAmount();
         }
 
         // 送料の税額を追加
         $shippingFee = $this->getShippingFee();
-        $shippingTaxRate = (string)$shippingFee->getTaxRate();
-        if (!isset($itemTaxes[$shippingTaxRate])) {
-            $itemTaxes[$shippingTaxRate] = [
-                'tax_rate' => $shippingTaxRate,
+        $shippingTaxRateKey = (string)$shippingFee->getTaxRate();
+        if (!isset($itemTaxes[$shippingTaxRateKey])) {
+            $itemTaxes[$shippingTaxRateKey] = [
+                'tax_rate' => $shippingFee->getTaxRate(),
                 'subtotal_with_tax' => 0,
                 'subtotal_without_tax' => 0,
                 'tax_amount' => 0,
             ];
         }
 
-        $itemTaxes[$shippingTaxRate]['subtotal_with_tax'] += $shippingFee->getPriceWithTax();
-        $itemTaxes[$shippingTaxRate]['subtotal_without_tax'] += $shippingFee->getPriceWithoutTax();
-        $itemTaxes[$shippingTaxRate]['tax_amount'] +=
+        $itemTaxes[$shippingTaxRateKey]['subtotal_with_tax'] += $shippingFee->getPriceWithTax();
+        $itemTaxes[$shippingTaxRateKey]['subtotal_without_tax'] += $shippingFee->getPriceWithoutTax();
+        $itemTaxes[$shippingTaxRateKey]['tax_amount'] +=
             $shippingFee->getPriceWithTax() - $shippingFee->getPriceWithoutTax();
 
         // 税率の昇順でソート
         ksort($itemTaxes);
 
         return $itemTaxes;
+    }
+
+    /**
+     * 作成日時を取得
+     */
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * 更新日時を取得
+     */
+    public function getUpdatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * 注文をキャンセル
+     *
+     * @param string $cancelReason キャンセル理由
+     */
+    public function cancel(string $cancelReason): void
+    {
+        $this->status = new OrderStatus('canceled');
+        $this->canceledAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
     }
 }
