@@ -1,0 +1,21 @@
+#この行を追加
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+  level: 5
+  paths:
+    - app
+  
+  # PHPDocの型を確実なものとして扱わないようにする
+  treatPhpDocTypesAsCertain: false
+  
+  ignoreErrors:
+    # methodメソッドに関するエラーを除外
+    - '#Call to an undefined method [a-zA-Z0-9\\_]+::method\(\)#'
+  
+    # updateOrCreateメソッドに関するエラーを除外
+    # - '#Call to an undefined (static )?method [a-zA-Z0-9\\_]+::updateOrCreate\(\)#'
+    
+    # 必要に応じて他のエラーパターンも追加できます
+    # - '#Access to an undefined property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9_]+#' 

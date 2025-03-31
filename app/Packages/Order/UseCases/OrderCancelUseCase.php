@@ -38,7 +38,7 @@ class OrderCancelUseCase
                 // 注文を取得
                 $orderId = new OrderId($requestDto->getOrderId());
                 $order = $this->orderRepository->find($orderId);
-                
+
                 if (!$order) {
                     throw new Exception('注文が見つかりませんでした。');
                 }

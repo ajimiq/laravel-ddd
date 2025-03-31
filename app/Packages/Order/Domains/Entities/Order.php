@@ -254,7 +254,7 @@ class Order
 
     /**
      * 注文をキャンセル
-     * 
+     *
      * @param string $cancelReason キャンセル理由
      */
     public function cancel(string $cancelReason): void

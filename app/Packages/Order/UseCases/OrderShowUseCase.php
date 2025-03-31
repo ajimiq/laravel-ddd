@@ -25,7 +25,7 @@ class OrderShowUseCase
         // リポジトリから注文エンティティを取得
         $orderId = new OrderId($requestDto->getOrderId());
         $order = $this->orderRepository->find($orderId);
-        
+
         if (!$order) {
             throw new \RuntimeException('注文が見つかりませんでした。');
         }
@@ -69,7 +69,7 @@ class OrderShowUseCase
                 'item_id' => $item->getItemId()->getValue(),
                 'name' => $item->getName()->getValue(),
                 'price_with_tax' => $item->getPrice()->getPriceWithTax(),
-                'price_without_tax' => $item->getPrice()->getPriceWithoutTax(), 
+                'price_without_tax' => $item->getPrice()->getPriceWithoutTax(),
                 'price_tax_rate' => $item->getPrice()->getTaxRate(),
                 'quantity' => $item->getQuantity(),
                 'subtotal_with_tax' => $item->getSubtotalWithTax(),
