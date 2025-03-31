@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注文詳細 - {{ $order->order_id }}</title>
+    <title>注文詳細 - {{ $order['order_id'] }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-white">
@@ -35,24 +35,24 @@
                     <h2 class="text-lg font-bold mb-4">注文情報</h2>
                     <dl class="grid grid-cols-3 gap-2 text-sm">
                         <dt class="text-gray-600">注文番号:</dt>
-                        <dd class="col-span-2">{{ $order->order_id }}</dd>
+                        <dd class="col-span-2">{{ $order['order_id'] }}</dd>
                         
                         <dt class="text-gray-600">注文日時:</dt>
-                        <dd class="col-span-2">{{ $order->ordered_at->format('Y年m月d日 H:i:s') }}</dd>
+                        <dd class="col-span-2">{{ $order['ordered_at'] }}</dd>
                         
                         <dt class="text-gray-600">ステータス:</dt>
                         <dd class="col-span-2">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                {{ $order->status === 'shipped' ? 'bg-green-100 text-green-800' : 
-                                   ($order->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
-                                   ($order->status === 'failed' ? 'bg-red-100 text-red-800' : 
-                                   ($order->status === 'canceled' ? 'bg-red-100 text-gray-800' : 'bg-blue-100 text-blue-800'))) }}">
-                                {{ $statuses[$order->status] ?? $order->status }}
+                                {{ $order['status'] === 'shipped' ? 'bg-green-100 text-green-800' : 
+                                   ($order['status'] === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                   ($order['status'] === 'failed' ? 'bg-red-100 text-red-800' : 
+                                   ($order['status'] === 'canceled' ? 'bg-red-100 text-gray-800' : 'bg-blue-100 text-blue-800'))) }}">
+                                {{ $statuses[$order['status']] ?? $order['status'] }}
                             </span>
-                            @if($order->canceled_at)
+                            @if($order['canceled_at'])
                                 <span class="block text-xs text-gray-500 mt-1">
-                                    キャンセル日時: {{ $order->canceled_at->format('Y年m月d日 H:i') }}<br>
-                                    キャンセル理由: {{ $order->cancel_reason }}
+                                    キャンセル日時: {{ $order['canceled_at'] }}<br>
+                                    キャンセル理由: {{ $order['cancel_reason'] }}
                                 </span>
                             @endif
                         </dd>
@@ -63,16 +63,16 @@
                     <h2 class="text-lg font-bold mb-4">お客様情報</h2>
                     <dl class="grid grid-cols-3 gap-2 text-sm">
                         <dt class="text-gray-600">お名前:</dt>
-                        <dd class="col-span-2">{{ $order->customer_name }}</dd>
+                        <dd class="col-span-2">{{ $order['customer_info']['customer_name'] }}</dd>
                         
                         <dt class="text-gray-600">メール:</dt>
-                        <dd class="col-span-2">{{ $order->customer_email }}</dd>
+                        <dd class="col-span-2">{{ $order['customer_info']['customer_email'] }}</dd>
                         
                         <dt class="text-gray-600">電話番号:</dt>
-                        <dd class="col-span-2">{{ $order->customer_phone }}</dd>
+                        <dd class="col-span-2">{{ $order['customer_info']['customer_phone'] }}</dd>
                         
                         <dt class="text-gray-600">配送先:</dt>
-                        <dd class="col-span-2 whitespace-pre-line">{{ $order->customer_address }}</dd>
+                        <dd class="col-span-2 whitespace-pre-line">{{ $order['customer_info']['customer_address'] }}</dd>
                     </dl>
                 </div>
             </div>
@@ -94,30 +94,30 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($order->orderItems as $item)
+                        @foreach($order['order_items'] as $item)
                             <tr class="border-b">
-                                <td class="py-2">{{ $item->name }}</td>
-                                <td class="py-2 text-right">¥{{ number_format($item->price_with_tax) }}</td>
-                                <td class="py-2 text-right">¥{{ number_format($item->price_without_tax) }}</td>
-                                <td class="py-2 text-right">{{ number_format($item->price_tax_rate * 100, 1) }}%</td>
-                                <td class="py-2 text-right">{{ $item->quantity }}</td>
-                                <td class="py-2 text-right">¥{{ number_format($item->price_with_tax * $item->quantity) }}</td>
+                                <td class="py-2">{{ $item['name'] }}</td>
+                                <td class="py-2 text-right">¥{{ number_format($item['price_with_tax']) }}</td>
+                                <td class="py-2 text-right">¥{{ number_format($item['price_without_tax']) }}</td>
+                                <td class="py-2 text-right">{{ number_format($item['price_tax_rate'] * 100, 1) }}%</td>
+                                <td class="py-2 text-right">{{ $item['quantity'] }}</td>
+                                <td class="py-2 text-right">¥{{ number_format($item['price_with_tax'] * $item['quantity']) }}</td>
                             </tr>
                         @endforeach
                         <tr class="border-b">
                             <td class="py-2">送料</td>
-                            <td class="py-2 text-right">¥{{ number_format($order->shipping_fee_with_tax) }}</td>
-                            <td class="py-2 text-right">¥{{ number_format($order->shipping_fee_without_tax) }}</td>
-                            <td class="py-2 text-right">{{ number_format($order->shipping_fee_tax_rate * 100, 1) }}%</td>
+                            <td class="py-2 text-right">¥{{ number_format($order['shipping_fee_with_tax']) }}</td>
+                            <td class="py-2 text-right">¥{{ number_format($order['shipping_fee_without_tax']) }}</td>
+                            <td class="py-2 text-right">{{ number_format($order['shipping_fee_tax_rate'] * 100, 1) }}%</td>
                             <td class="py-2 text-right">-</td>
-                            <td class="py-2 text-right">¥{{ number_format($order->shipping_fee_with_tax) }}</td>
+                            <td class="py-2 text-right">¥{{ number_format($order['shipping_fee_with_tax']) }}</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="3" class="py-2"></td>
                             <td class="py-2 text-right font-bold">小計（税抜）:</td>
-                            <td class="py-2 text-right">¥{{ number_format($order->total_amount_without_tax) }}</td>
+                            <td class="py-2 text-right">¥{{ number_format($order['total_amount_without_tax']) }}</td>
                         </tr>
                         @foreach($taxAmountsByRate as $taxInfo)
                             <tr>
@@ -133,7 +133,7 @@
                         <tr class="border-t-2 border-black">
                             <td colspan="3" class="py-2"></td>
                             <td class="py-2 text-right font-bold">合計（税込）:</td>
-                            <td class="py-2 text-right font-bold">¥{{ number_format($order->total_amount_with_tax) }}</td>
+                            <td class="py-2 text-right font-bold">¥{{ number_format($order['total_amount_with_tax']) }}</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -142,7 +142,7 @@
 
         {{-- 操作ボタン --}}
         <div class="flex justify-end space-x-4">
-            <a href="{{ route('orders.receipt', $order->order_id) }}" 
+            <a href="{{ route('orders.receipt', $order['order_id']) }}" 
                target="_blank"
                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">領収書を表示</a>
         </div>

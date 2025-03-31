@@ -234,15 +234,15 @@ class OrderTest extends TestCase
         // 実際のOrderItemsを作成（モックではなく）
         $item1 = new OrderItem(
             new OrderItemId('item-001'),
-            new OrderItemName('通常税率商品'),
-            new OrderItemPrice(1000, 0.1), // 税抜1000円、税率10%
+            new OrderItemName('軽減税率商品'),
+            new OrderItemPrice(2000, 0.08), // 税抜2000円、税率8%
             1
         );
 
         $item2 = new OrderItem(
             new OrderItemId('item-002'),
-            new OrderItemName('軽減税率商品'),
-            OrderItemPrice::withReducedTaxRate(2000), // 税抜2000円、税率8%
+            new OrderItemName('通常税率商品'),
+            new OrderItemPrice(1000, 0.10), // 税抜1000円、税率10%
             1
         );
 

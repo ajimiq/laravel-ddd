@@ -27,11 +27,6 @@ class OrderReceiveUseCase
      */
     public function execute(OrderReceiveRequestDto $requestDto): OrderReceiveResponseDto
     {
-        // DTOが指定されていない場合はデフォルト値を使用
-        if ($requestDto === null) {
-            $requestDto = new OrderReceiveRequestDto();
-        }
-
         // 注文情報を取得
         $orders = $this->orderGetter->getOrders(
             $requestDto->getFromDays(),

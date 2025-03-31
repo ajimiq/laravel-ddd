@@ -23,7 +23,7 @@ class Order extends Model
     /**
      * 代入可能な属性
      *
-     * @var array<string>
+     * @var array<int, string>
      */
     protected $fillable = [
         'order_id',

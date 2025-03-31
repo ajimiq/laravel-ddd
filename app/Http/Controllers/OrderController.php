@@ -92,14 +92,6 @@ class OrderController extends Controller
      */
     public function showReceipt(string $orderId): View
     {
-        // 注文を取得
-        $order = Order::findOrFail($orderId);
-
-        // // 決済待ちの場合は領収書を表示しない
-        // if ($order->status === 'pending') {
-        //     return back()->with('error', '決済待ちの注文の領収書は表示できません。');
-        // }
-
         // リクエストからDTOを作成
         $requestDto = new OrderShowReceiptRequestDto($orderId);
 

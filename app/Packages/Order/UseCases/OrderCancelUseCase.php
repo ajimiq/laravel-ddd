@@ -2,8 +2,8 @@
 
 namespace App\Packages\Order\UseCases;
 
-use App\Models\Order;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
+use App\Packages\Order\Domains\ValueObjects\OrderId;
 use App\Packages\Order\UseCases\Dtos\OrderCancelRequestDto;
 use App\Packages\Order\UseCases\Dtos\OrderCancelResponseDto;
 use Exception;
@@ -36,19 +36,21 @@ class OrderCancelUseCase
         DB::transaction(function () use ($requestDto) {
             try {
                 // 注文を取得
-                $order = Order::lockForUpdate()->findOrFail($requestDto->getOrderId());
+                $orderId = new OrderId($requestDto->getOrderId());
+                $order = $this->orderRepository->find($orderId);
+                
+                if (!$order) {
+                    throw new Exception('注文が見つかりませんでした。');
+                }
 
                 // キャンセル可能かチェック
-                if ($order->status !== 'unshipped') {
+                if ($order->getStatus()->getValue() !== 'unshipped') {
                     throw new \RuntimeException('この注文はキャンセルできません。');
                 }
 
                 // 注文をキャンセル
-                $order->update([
-                    'status' => 'canceled',
-                    'canceled_at' => now(),
-                    'cancel_reason' => $requestDto->getCancelReason(),
-                ]);
+                $order->cancel($requestDto->getCancelReason());
+                $this->orderRepository->update($order);
             } catch (Exception $e) {
                 // エラーレスポンスを返す
                 return new OrderCancelResponseDto(

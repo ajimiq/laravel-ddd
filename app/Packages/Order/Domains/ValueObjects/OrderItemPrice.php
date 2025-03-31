@@ -23,7 +23,6 @@ class OrderItemPrice extends Price
      * 無料商品かどうかを確認
      */
     public function isFree(): bool
-    {
         return $this->getPriceWithTax() === 0;
     }
 
