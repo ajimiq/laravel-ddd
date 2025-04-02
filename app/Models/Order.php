@@ -71,30 +71,6 @@ class Order extends Model
     }
 
     /**
-     * 保留中の注文かどうか
-     */
-    public function isPending(): bool
-    {
-        return $this->status === 'pending';
-    }
-
-    /**
-     * 失敗した注文かどうか
-     */
-    public function isFailure(): bool
-    {
-        return $this->status === 'failed';
-    }
-
-    /**
-     * 未発送の注文かどうか
-     */
-    public function isUnshipped(): bool
-    {
-        return $this->status === 'unshipped';
-    }
-
-    /**
      * ECサイトを取得
      */
     public function ecSite()

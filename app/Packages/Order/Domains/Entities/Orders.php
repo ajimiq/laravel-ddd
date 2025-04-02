@@ -23,6 +23,9 @@ class Orders implements Iterator, Countable, ArrayAccess
 
     /**
      * 注文を追加
+     *
+     * @param Order $order
+     * @return void
      */
     public function add(Order $order): void
     {
@@ -31,27 +34,49 @@ class Orders implements Iterator, Countable, ArrayAccess
 
     /**
      * Iterator インターフェースの実装
+     *
+     * @return Order
      */
     public function current(): Order
     {
         return $this->orders[$this->position];
     }
 
+    /**
+     * Iterator インターフェースの実装
+     *
+     * @return int
+     */
     public function key(): int
     {
         return $this->position;
     }
 
+    /**
+     * Iterator インターフェースの実装
+     *
+     * @return void
+     */
     public function next(): void
     {
         ++$this->position;
     }
 
+    /**
+     * Iterator インターフェースの実装
+     *
+     * @return void
+     */
     public function rewind(): void
     {
         $this->position = 0;
     }
 
+    /**
+     * Iterator インターフェースの実装
+     *
+     * @return bool
+     */
     public function valid(): bool
     {
         return isset($this->orders[$this->position]);
@@ -59,6 +84,8 @@ class Orders implements Iterator, Countable, ArrayAccess
 
     /**
      * Countable インターフェースの実装
+     *
+     * @return int
      */
     public function count(): int
     {
@@ -67,6 +94,10 @@ class Orders implements Iterator, Countable, ArrayAccess
 
     /**
      * ArrayAccess インターフェースの実装
+     *
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -77,16 +108,34 @@ class Orders implements Iterator, Countable, ArrayAccess
         }
     }
 
+    /**
+     * ArrayAccess インターフェースの実装
+     *
+     * @param mixed $offset
+     * @return bool
+     */
     public function offsetExists(mixed $offset): bool
     {
         return isset($this->orders[$offset]);
     }
 
+    /**
+     * ArrayAccess インターフェースの実装
+     *
+     * @param mixed $offset
+     * @return void
+     */
     public function offsetUnset(mixed $offset): void
     {
         unset($this->orders[$offset]);
     }
 
+    /**
+     * ArrayAccess インターフェースの実装
+     *
+     * @param mixed $offset
+     * @return ?Order
+     */
     public function offsetGet(mixed $offset): ?Order
     {
         return isset($this->orders[$offset]) ? $this->orders[$offset] : null;
@@ -104,6 +153,8 @@ class Orders implements Iterator, Countable, ArrayAccess
 
     /**
      * 空かどうかを確認
+     *
+     * @return bool
      */
     public function isEmpty(): bool
     {

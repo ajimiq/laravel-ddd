@@ -2,17 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Batch\ImportDataBatch;
 use App\Packages\Order\UseCases\OrderReceiveUseCase;
 use App\Packages\Order\Infrastructures\TestMallOrderGetter;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
 use App\Packages\Order\UseCases\Dtos\OrderReceiveRequestDto;
-use App\Packages\Order\UseCases\Dtos\OrderReceiveResponseDto;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
+use App\Traits\LoggableTrait;
 
 class ReceiveTestMallOrderBatch extends Command
 {
+    use LoggableTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -45,10 +45,12 @@ class ReceiveTestMallOrderBatch extends Command
     /**
      * Execute the console command.
      *
-     * @return int
+     * @return void
      */
     public function handle()
     {
+        $this->logCurrentMethod('START args: ' . var_export($this->options(), true));
+
         // オプションから値を取得（デフォルト値を設定）
         $fromDays = $this->option('from') ? (int)$this->option('from') : 30;
         $toDays = $this->option('to') ? (int)$this->option('to') : 0;
@@ -76,9 +78,10 @@ class ReceiveTestMallOrderBatch extends Command
             foreach ($responseDto->getErrorMessages() as $errorMessage) {
                 $this->error("- {$errorMessage}");
             }
-            return 1;
+            $this->logCurrentMethod('ABNORMAL END: ' . var_export($responseDto->getErrorMessages(), true));
+            return;
         }
 
-        return 0;
+        $this->logCurrentMethod('END');
     }
 }

@@ -15,7 +15,6 @@ use App\Packages\Order\Domains\ValueObjects\OrderItemName;
 use App\Packages\Order\Domains\ValueObjects\OrderCustomerInfo;
 use App\Packages\Order\Domains\ValueObjects\ShippingFee;
 use App\Packages\Shared\Domains\ValueObjects\EcSiteCode;
-use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Facades\Log;
 use DateTimeImmutable;
 
@@ -116,6 +115,12 @@ class TestMallOrderGetter implements OrderGetterInterface
         return new Orders($orders);
     }
 
+    /**
+     * 注文IDを生成
+     *
+     * @param DateTimeImmutable $orderedAt
+     * @return OrderId
+     */
     private function generateOrderId(DateTimeImmutable $orderedAt): OrderId
     {
         $dateStr = $orderedAt->format('Ymd');
@@ -132,6 +137,11 @@ class TestMallOrderGetter implements OrderGetterInterface
         return new OrderId("Order-{$dateStr}-{$sequence}");
     }
 
+    /**
+     * ランダムな注文商品を生成
+     *
+     * @return OrderItems
+     */
     private function generateRandomOrderItems(): OrderItems
     {
         $items = [];
@@ -176,6 +186,12 @@ class TestMallOrderGetter implements OrderGetterInterface
         return new OrderItems($items);
     }
 
+    /**
+     * 注文数量を決定
+     *
+     * @param int $price
+     * @return int
+     */
     private function determineQuantity(int $price): int
     {
         if ($price >= 10000) {
@@ -189,6 +205,11 @@ class TestMallOrderGetter implements OrderGetterInterface
         }
     }
 
+    /**
+     * ランダムな顧客情報を生成
+     *
+     * @return OrderCustomerInfo
+     */
     private function generateRandomCustomerInfo(): OrderCustomerInfo
     {
         $firstNames = [
@@ -252,6 +273,11 @@ class TestMallOrderGetter implements OrderGetterInterface
         );
     }
 
+    /**
+     * 繰り返し顧客情報を取得
+     *
+     * @return OrderCustomerInfo
+     */
     private function getRepeaterCustomerInfo(): OrderCustomerInfo
     {
         $repeater = $this->repeaterCustomers[array_rand($this->repeaterCustomers)];
@@ -263,6 +289,12 @@ class TestMallOrderGetter implements OrderGetterInterface
         );
     }
 
+    /**
+     * 送料を計算
+     *
+     * @param OrderItems $orderItems
+     * @return int
+     */
     private function calculateShippingFee(OrderItems $orderItems): int
     {
         $subtotal = $orderItems->getSubtotalWithTax();
@@ -272,12 +304,25 @@ class TestMallOrderGetter implements OrderGetterInterface
         return 800; // 通常送料
     }
 
+    /**
+     * ランダムな日付を生成
+     *
+     * @param int $fromDays
+     * @param int $toDays
+     * @return DateTimeImmutable
+     */
     private function generateRandomDate(int $fromDays, int $toDays): DateTimeImmutable
     {
         $timestamp = mt_rand(strtotime("-$fromDays days"), strtotime("-$toDays days"));
         return new DateTimeImmutable("@$timestamp");
     }
 
+    /**
+     * ローマ字変換
+     *
+     * @param string $text
+     * @return string
+     */
     private function toRomaji(string $text): string
     {
         // 姓のローマ字変換

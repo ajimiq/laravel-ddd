@@ -15,19 +15,4 @@ interface OrderGetterInterface
      * @return Orders
      */
     public function getOrders(int $fromDays = 30, int $toDays = 0, int $limit = 10): Orders;
-
-    // /**
-    //  * 分割された注文を取得
-    //  *
-    //  * @param string $orderId
-    //  * @return Order
-    //  */
-    // public function getDividedOrders(string $orderId): Order;
-
-    // /**
-    //  * 次の注文を取得
-    //  *
-    //  * @return Order
-    //  */
-    // public function next(): Order;
 }

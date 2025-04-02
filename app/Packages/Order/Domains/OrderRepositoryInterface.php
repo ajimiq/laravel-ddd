@@ -34,14 +34,6 @@ interface OrderRepositoryInterface
     public function searchOrders(array $searchParams, int $perPage): LengthAwarePaginator;
 
     /**
-     * 分割された注文を取得
-     *
-     * @param OrderId $orderId
-     * @return Order
-     */
-    public function getDividedOrders(OrderId $orderId): Order;
-
-    /**
      * 注文を保存
      *
      * @param Order $order

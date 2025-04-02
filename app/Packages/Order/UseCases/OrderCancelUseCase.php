@@ -7,7 +7,6 @@ use App\Packages\Order\Domains\ValueObjects\OrderId;
 use App\Packages\Order\UseCases\Dtos\OrderCancelRequestDto;
 use App\Packages\Order\UseCases\Dtos\OrderCancelResponseDto;
 use Exception;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 /**
