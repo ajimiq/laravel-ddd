@@ -128,15 +128,16 @@ return [
         ],
 
         'online' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/online.log'),
             'level' => env('LOG_LEVEL', 'debug'),
         ],
 
         'batch' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/batch.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
         ],
 
         'debug' => [
