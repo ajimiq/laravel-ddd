@@ -7,13 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItem extends Model
 {
-    // /**
-    //  * プライマリーキーの設定
-    //  */
-    // protected $primaryKey = 'item_id';
-    // public $incrementing = false;
-    // protected $keyType = 'string';
-
     /**
      * タイムスタンプの設定
      */
@@ -57,37 +50,5 @@ class OrderItem extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id', 'order_id');
-    }
-
-    /**
-     * 商品の小計を取得
-     */
-    public function getSubtotal(): int
-    {
-        return $this->price_with_tax * $this->quantity;
-    }
-
-    /**
-     * 税率を取得
-     */
-    public function getTaxRate(): float
-    {
-        return $this->price_tax_rate;
-    }
-
-    /**
-     * 税抜価格を取得
-     */
-    public function getPriceWithoutTax(): int
-    {
-        return $this->price_without_tax;
-    }
-
-    /**
-     * 税額を取得
-     */
-    public function getTaxAmount(): int
-    {
-        return $this->price_with_tax - $this->price_without_tax;
     }
 }

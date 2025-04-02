@@ -5,7 +5,6 @@ namespace App\Packages\Order\UseCases;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
 use App\Packages\Order\UseCases\Dtos\OrderIndexRequestDto;
 use App\Packages\Order\UseCases\Dtos\OrderIndexResponseDto;
-use Illuminate\Support\Facades\Log;
 
 class OrderIndexUseCase
 {
@@ -22,7 +21,6 @@ class OrderIndexUseCase
      */
     public function execute(OrderIndexRequestDto $requestDto): OrderIndexResponseDto
     {
-        Log::channel('online')->info(var_export($requestDto->toArray(), true));
 
         // リポジトリを使用して注文一覧を取得
         $orders = $this->orderRepository->searchOrders(

@@ -11,10 +11,6 @@ class OrderItemId
 
     public function __construct(string $value)
     {
-        // if (!Uuid::isValid($value)) {
-        //     throw new InvalidArgumentException('Invalid Item ID');
-        // }
-
         $this->value = $value;
     }
 

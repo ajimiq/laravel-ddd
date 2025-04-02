@@ -21,6 +21,8 @@ class OrderItemPrice extends Price
 
     /**
      * 無料商品かどうかを確認
+     *
+     * @return bool
      */
     public function isFree(): bool
     {
@@ -29,6 +31,10 @@ class OrderItemPrice extends Price
 
     /**
      * 軽減税率を適用した新しいインスタンスを作成
+     *
+     * @param int $priceWithoutTax 税抜き販売価格
+     * @param int $roundingMode 端数処理方法
+     * @return self
      */
     public static function withReducedTaxRate(
         int $priceWithoutTax,
@@ -39,6 +45,10 @@ class OrderItemPrice extends Price
 
     /**
      * 非課税の新しいインスタンスを作成
+     *
+     * @param int $priceWithoutTax 税抜き販売価格
+     * @param int $roundingMode 端数処理方法
+     * @return self
      */
     public static function taxExempt(
         int $priceWithoutTax,

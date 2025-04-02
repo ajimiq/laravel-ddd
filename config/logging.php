@@ -127,18 +127,6 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
-        'online' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/online.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
-        ],
-
-        'batch' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/batch.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
-        ],
-
         'debug' => [
             'driver' => 'single',
             'path' => storage_path('logs/debug.log'),

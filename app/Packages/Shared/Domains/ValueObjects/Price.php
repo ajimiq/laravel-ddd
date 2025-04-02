@@ -66,6 +66,8 @@ class Price
 
     /**
      * 消費税額を取得
+     *
+     * @return int
      */
     public function getTaxAmount(): int
     {
@@ -80,6 +82,8 @@ class Price
 
     /**
      * 税込み価格を取得
+     *
+     * @return int
      */
     public function getPriceWithTax(): int
     {
@@ -88,6 +92,8 @@ class Price
 
     /**
      * 適用される税率を取得
+     *
+     * @return float
      */
     public function getTaxRate(): float
     {
@@ -96,6 +102,8 @@ class Price
 
     /**
      * 軽減税率適用商品かどうかを確認
+     *
+     * @return bool
      */
     public function isReducedTaxRate(): bool
     {
@@ -104,6 +112,9 @@ class Price
 
     /**
      * 価格を加算
+     *
+     * @param Price $other
+     * @return self
      */
     public function add(Price $other): self
     {
@@ -120,6 +131,9 @@ class Price
 
     /**
      * 価格を比較
+     *
+     * @param Price $other
+     * @return bool
      */
     public function equals(Price $other): bool
     {
@@ -129,6 +143,8 @@ class Price
 
     /**
      * 文字列に変換
+     *
+     * @return string
      */
     public function __toString(): string
     {

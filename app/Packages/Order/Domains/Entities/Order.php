@@ -51,6 +51,7 @@ class Order
 
     /**
      * 注文IDを取得
+     * @return OrderId
      */
     public function getOrderId(): OrderId
     {
@@ -59,6 +60,7 @@ class Order
 
     /**
      * 注文ステータスを取得
+     * @return OrderStatus
      */
     public function getStatus(): OrderStatus
     {
@@ -67,6 +69,7 @@ class Order
 
     /**
      * 送料を取得
+     * @return ShippingFee
      */
     public function getShippingFee(): ShippingFee
     {
@@ -75,6 +78,7 @@ class Order
 
     /**
      * 顧客情報を取得
+     * @return OrderCustomerInfo
      */
     public function getCustomerInfo(): OrderCustomerInfo
     {
@@ -83,6 +87,7 @@ class Order
 
     /**
      * 商品リストを取得
+     * @return OrderItems
      */
     public function getOrderItems(): OrderItems
     {
@@ -91,6 +96,7 @@ class Order
 
     /**
      * 注文日時を取得
+     * @return DateTimeImmutable
      */
     public function getOrderedAt(): DateTimeImmutable
     {
@@ -99,6 +105,7 @@ class Order
 
     /**
      * キャンセル日時を取得
+     * @return ?DateTimeImmutable
      */
     public function getCanceledAt(): ?DateTimeImmutable
     {
@@ -107,6 +114,7 @@ class Order
 
     /**
      * キャンセル理由を取得
+     * @return ?string
      */
     public function getCancelReason(): ?string
     {
@@ -115,6 +123,7 @@ class Order
 
     /**
      * 保留中かどうかを確認
+     * @return bool
      */
     public function isPending(): bool
     {
@@ -123,6 +132,7 @@ class Order
 
     /**
      * 失敗したかどうかを確認
+     * @return bool
      */
     public function isFailure(): bool
     {
@@ -132,6 +142,7 @@ class Order
     /**
      * 注文合計を取得
      * 商品小計 + 送料
+     * @return int
      */
     public function getTotalAmountWithTax(): int
     {
@@ -141,6 +152,7 @@ class Order
     /**
      * 注文合計（税抜）を取得
      * 商品小計（税抜） + 送料（税抜）
+     * @return int
      */
     public function getTotalAmountWithoutTax(): int
     {
@@ -149,6 +161,7 @@ class Order
 
     /**
      * 注文の税額合計を取得
+     * @return int
      */
     public function getTotalTaxAmount(): int
     {
@@ -157,6 +170,7 @@ class Order
 
     /**
      * ECサイトコードを取得
+     * @return EcSiteCode
      */
     public function getEcSiteCode(): EcSiteCode
     {

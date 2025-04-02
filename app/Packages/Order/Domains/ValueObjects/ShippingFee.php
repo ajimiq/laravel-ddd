@@ -21,6 +21,8 @@ class ShippingFee extends Price
 
     /**
      * 送料無料かどうかを確認
+     *
+     * @return bool
      */
     public function isFree(): bool
     {
@@ -29,6 +31,8 @@ class ShippingFee extends Price
 
     /**
      * 送料無料のインスタンスを作成
+     *
+     * @return self
      */
     public static function free(): self
     {

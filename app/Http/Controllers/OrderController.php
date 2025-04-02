@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Log;
 use App\Packages\Order\UseCases\OrderShowUseCase;
 use App\Packages\Order\UseCases\OrderShowReceiptUseCase;
 use App\Packages\Order\UseCases\OrderCancelUseCase;
@@ -14,11 +12,13 @@ use App\Packages\Order\UseCases\Dtos\OrderIndexRequestDto;
 use App\Packages\Order\UseCases\Dtos\OrderShowRequestDto;
 use App\Packages\Order\UseCases\Dtos\OrderShowReceiptRequestDto;
 use App\Packages\Order\UseCases\Dtos\OrderCancelRequestDto;
-use App\Packages\Order\UseCases\Dtos\OrderCancelResponseDto;
 use Illuminate\Http\JsonResponse;
+use App\Traits\LoggableTrait;
 
 class OrderController extends Controller
 {
+    use LoggableTrait;
+
     public function __construct(
         private readonly OrderShowUseCase $orderShowUseCase,
         private readonly OrderShowReceiptUseCase $orderShowReceiptUseCase,
@@ -29,9 +29,12 @@ class OrderController extends Controller
 
     /**
      * 注文一覧を表示
+     * @param Request $request
+     * @return View
      */
     public function index(Request $request): View
     {
+        $this->logCurrentMethod('START request: ' . var_export($request->all(), true));
         // リクエストからDTOを作成
         $requestDto = new OrderIndexRequestDto(
             $request->status,
@@ -46,21 +49,16 @@ class OrderController extends Controller
         return view('orders.index', $responseDto->toArray());
     }
 
-    public function downloadReceipt(string $orderId)
-    {
-        $order = Order::findOrFail($orderId);
-
-        // 領収書のPDF生成処理（実装は省略）
-        // return response()->download($pdfPath, "receipt_{$orderId}.pdf");
-
-        return back()->with('error', '領収書の出力は準備中です。');
-    }
-
     /**
      * 注文をキャンセル
+     * @param Request $request
+     * @param string $orderId
+     * @return JsonResponse
      */
     public function cancel(Request $request, string $orderId): JsonResponse
     {
+        $this->logCurrentMethod('START request: ' . var_export($request->all(), true));
+
         // リクエストからDTOを作成
         $requestDto = new OrderCancelRequestDto(
             $orderId,
@@ -70,6 +68,8 @@ class OrderController extends Controller
 
         // UseCaseを実行してレスポンスDTOを取得
         $responseDto = $this->orderCancelUseCase->execute($requestDto);
+
+        $this->logCurrentMethod('response: ' . var_export($responseDto->toArray(), true));
 
         // レスポンスDTOの内容に基づいてJSONレスポンスを返す
         if ($responseDto->isSuccess()) {
@@ -89,9 +89,13 @@ class OrderController extends Controller
 
     /**
      * 領収書を表示
+     * @param string $orderId
+     * @return View
      */
     public function showReceipt(string $orderId): View
     {
+        $this->logCurrentMethod('START request: ' . $orderId);
+
         // リクエストからDTOを作成
         $requestDto = new OrderShowReceiptRequestDto($orderId);
 
@@ -104,9 +108,13 @@ class OrderController extends Controller
 
     /**
      * 注文詳細を表示
+     * @param string $orderId
+     * @return View
      */
     public function showDetail(string $orderId): View
     {
+        $this->logCurrentMethod('START request: ' . $orderId);
+
         // リクエストからDTOを作成
         $requestDto = new OrderShowRequestDto($orderId);
 

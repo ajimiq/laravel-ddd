@@ -121,19 +121,6 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     /**
-     * 分割された注文を取得
-     *
-     * @param OrderId $orderId
-     * @return Order
-     * @throws \RuntimeException
-     */
-    public function getDividedOrders(OrderId $orderId): Order
-    {
-        // 現時点では注文の分割機能は未実装
-        throw new \RuntimeException('Order division is not implemented yet.');
-    }
-
-    /**
      * 注文を更新
      *
      * @param Order $order

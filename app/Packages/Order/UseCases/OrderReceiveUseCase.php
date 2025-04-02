@@ -7,7 +7,6 @@ use App\Packages\Order\Domains\OrderGetterInterface;
 use App\Packages\Order\Domains\OrderRepositoryInterface;
 use App\Packages\Order\UseCases\Dtos\OrderReceiveRequestDto;
 use App\Packages\Order\UseCases\Dtos\OrderReceiveResponseDto;
-use Illuminate\Support\Facades\Log;
 
 class OrderReceiveUseCase
 {
@@ -67,7 +66,6 @@ class OrderReceiveUseCase
      */
     private function processOrder(Order $order): array
     {
-        Log::channel('batch')->info(var_export($order, true));
         echo "----------------------------------------\n";
         echo sprintf("注文: %s ステータス: %s 注文日時: %s\n", $order->getOrderId(), $order->getStatus(), $order->getOrderedAt()->format('Y-m-d H:i:s'));
         foreach ($order->getOrderItems() as $item) {
@@ -77,14 +75,12 @@ class OrderReceiveUseCase
 
         // 保留チェック
         if ($order->isPending()) {
-            Log::channel('batch')->info(sprintf("保留注文: %s\n", $order->getOrderId()->getValue()));
-            // echo sprintf("保留注文: %s\n", $order->getOrderId()->getValue());
+            echo sprintf("保留注文: %s\n", $order->getOrderId()->getValue());
             // return;
         }
 
         // 不正注文チェック
         if ($order->isFailure()) {
-            Log::channel('batch')->info(sprintf("不正注文: %s\n", $order->getOrderId()->getValue()));
             echo sprintf("不正注文: %s\n", $order->getOrderId()->getValue());
             // return;
         }
