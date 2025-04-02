@@ -155,17 +155,13 @@ class TestMallOrderGetter implements OrderGetterInterface
             default    => 5,   // 5%
         };
 
-        $selectedProducts = array_rand($this->products, $numItems);
-        if (!is_array($selectedProducts)) {
-            $selectedProducts = [$selectedProducts];
-        }
-
-        // 商品を1つ以上確実に選択する
-        if (count($selectedProducts) === 0) {
-            $productKeys = array_keys($this->products);
-            shuffle($productKeys);
-            $selectedProducts = array_slice($productKeys, 0, $numItems);
-        }
+        // 全商品のキーを取得
+        $productKeys = array_keys($this->products);
+        // キーをシャッフルして重複しないように選択
+        shuffle($productKeys);
+        // 商品数分だけキーを選択
+        $selectedProducts = array_slice($productKeys, 0, $numItems);
+        
         Log::channel('debug')->debug('after2 selectedProducts: ' . json_encode($selectedProducts));
 
         foreach ($selectedProducts as $productKey) {
@@ -174,7 +170,6 @@ class TestMallOrderGetter implements OrderGetterInterface
 
             $taxRate = $product['is_food'] ? 0.08 : 0.10; // 食品は8%、それ以外は10%
             $items[] = new OrderItem(
-                // new OrderItemId('ITEM-' . str_pad((string)mt_rand(0, 99999), 5, '0', STR_PAD_LEFT)),
                 new OrderItemId($productKey),
                 new OrderItemName($product['name']),
                 new OrderItemPrice($product['price'], $taxRate),
