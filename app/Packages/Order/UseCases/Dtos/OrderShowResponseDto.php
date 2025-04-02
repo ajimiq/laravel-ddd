@@ -33,7 +33,11 @@ class OrderShowResponseDto
      *     quantity: int,
      *     subtotal_with_tax: int,
      *     subtotal_without_tax: int
-     *   }>
+     *   }>,
+     *   created_at: string,
+     *   updated_at: string,
+     *   canceled_at: string,
+     *   cancel_reason: string
      * } $order 注文データ
      * @param array<float|string, array{
      *   tax_rate: float,

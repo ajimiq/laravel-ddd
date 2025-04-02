@@ -59,17 +59,17 @@ class OrderController extends Controller
     {
         $this->logCurrentMethod('START request: ' . var_export($request->all(), true));
 
+        $cancelReason = $request->input('cancel_reason');
+        $cancelReason .= $request->input('other_reason') ? ':' . $request->input('other_reason') : '';
         // リクエストからDTOを作成
         $requestDto = new OrderCancelRequestDto(
             $orderId,
-            $request->input('cancel_reason'),
+            $cancelReason,
             now()->format('Y-m-d H:i:s')
         );
 
         // UseCaseを実行してレスポンスDTOを取得
         $responseDto = $this->orderCancelUseCase->execute($requestDto);
-
-        $this->logCurrentMethod('response: ' . var_export($responseDto->toArray(), true));
 
         // レスポンスDTOの内容に基づいてJSONレスポンスを返す
         if ($responseDto->isSuccess()) {

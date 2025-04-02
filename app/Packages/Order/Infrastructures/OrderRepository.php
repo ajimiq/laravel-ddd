@@ -33,7 +33,7 @@ class OrderRepository implements OrderRepositoryInterface
     {
         DB::transaction(function () use ($order) {
             // 注文の保存
-            $orderModel = OrderModel::updateOrCreate(
+            OrderModel::updateOrCreate(
                 ['order_id' => $order->getOrderId()->getValue()],
                 [
                     'ec_site_code' => $order->getEcSiteCode()->getValue(),
@@ -121,14 +121,24 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     /**
-     * 注文を更新
+     * キャンセル
      *
      * @param Order $order
      * @return void
      */
-    public function update(Order $order): void
+    public function cancel(Order $order): void
     {
-        $this->save($order);
+        DB::transaction(function () use ($order) {
+            OrderModel::updateOrCreate(
+                ['order_id' => $order->getOrderId()->getValue()],
+                [
+                    'status' => $order->getStatus()->getValue(),
+                    'canceled_at' => now(),
+                    'cancel_reason' => $order->getCancelReason(),
+                    'updated_at' => now(),
+                ]
+            );
+        });
     }
 
     /**
@@ -230,7 +240,8 @@ class OrderRepository implements OrderRepositoryInterface
             $orderItems,
             new DateTimeImmutable($model->created_at),
             $model->updated_at ? new DateTimeImmutable($model->updated_at) : null,
-            $model->canceled_at ? new DateTimeImmutable($model->canceled_at) : null
+            $model->canceled_at ? new DateTimeImmutable($model->canceled_at) : null,
+            $model->cancel_reason
         );
     }
 
