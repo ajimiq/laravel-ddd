@@ -48,6 +48,8 @@ class OrderShowUseCase
             'status' => $order->getStatus()->getValue(),
             'ordered_at' => $order->getOrderedAt()->format('Y年m月d日 H:i'),
             'canceled_at' => $order->getCanceledAt() ? $order->getCanceledAt()->format('Y年m月d日 H:i') : null,
+            'created_at' => $order->getCreatedAt()->format('Y年m月d日 H:i'),
+            'updated_at' => $order->getUpdatedAt() ? $order->getUpdatedAt()->format('Y年m月d日 H:i') : null,
             'cancel_reason' => $order->getCancelReason(),
             'customer_info' => [
                 'customer_name' => $order->getCustomerInfo()->getName(),

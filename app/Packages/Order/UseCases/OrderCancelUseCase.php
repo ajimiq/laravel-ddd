@@ -49,7 +49,7 @@ class OrderCancelUseCase
 
                 // 注文をキャンセル
                 $order->cancel($requestDto->getCancelReason());
-                $this->orderRepository->update($order);
+                $this->orderRepository->cancel($order);
             } catch (Exception $e) {
                 // エラーレスポンスを返す
                 return new OrderCancelResponseDto(

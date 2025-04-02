@@ -1,27 +1,32 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>領収書 - {{ $order['order_id'] }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-white">
-    <div class="container mx-auto px-4 py-8 max-w-3xl">
-        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-yellow-700">
-                        この領収書はテスト用の架空のデータに基づいて作成されています。実際の取引を示すものではありません。
-                    </p>
-                </div>
-            </div>
-        </div>
+<x-app-layout>
+    <x-slot name="title">領収書 - {{ $order['order_id'] }}</x-slot>
+    <x-slot name="header">領収書</x-slot>
+    <x-slot name="notification">この領収書はテスト用の架空のデータに基づいて作成されています。実際の取引を示すものではありません。</x-slot>
+
+    @push('styles')
+    <style>
+        @media print {
+            @page {
+                size: A4;
+                margin: 12mm;
+            }
+            body {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            header, footer, .print\:hidden {
+                display: none !important;
+            }
+            .container {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
+    @endpush
+
+    <div class="max-w-3xl mx-auto">
         {{-- 領収書ヘッダー --}}
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold mb-4">領収書</h1>
@@ -126,18 +131,4 @@
             </div>
         </div>
     </div>
-
-    <style>
-        @media print {
-            @page {
-                size: A4;
-                margin: 12mm;
-            }
-            body {
-                print-color-adjust: exact;
-                -webkit-print-color-adjust: exact;
-            }
-        }
-    </style>
-</body>
-</html> 
+</x-app-layout> 

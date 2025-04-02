@@ -104,6 +104,24 @@ class Order
     }
 
     /**
+     * 作成日時を取得
+     * @return DateTimeImmutable
+     */
+    public function getCreatedAt(): DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * 更新日時を取得
+     * @return ?DateTimeImmutable
+     */
+    public function getUpdatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    /**
      * キャンセル日時を取得
      * @return ?DateTimeImmutable
      */
@@ -192,8 +210,10 @@ class Order
             'total_amount_without_tax' => $this->getTotalAmountWithoutTax(),
             'order_items' => $this->orderItems->toArray(),
             'ordered_at' => $this->orderedAt->format('Y-m-d H:i:s'),
+            'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt?->format('Y-m-d H:i:s'),
             'canceled_at' => $this->canceledAt?->format('Y-m-d H:i:s'),
+            'cancel_reason' => $this->cancelReason,
         ];
     }
 
@@ -251,22 +271,6 @@ class Order
     }
 
     /**
-     * 作成日時を取得
-     */
-    public function getCreatedAt(): DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * 更新日時を取得
-     */
-    public function getUpdatedAt(): ?DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    /**
      * 注文をキャンセル
      *
      * @param string $cancelReason キャンセル理由
@@ -274,6 +278,7 @@ class Order
     public function cancel(string $cancelReason): void
     {
         $this->status = new OrderStatus('canceled');
+        $this->cancelReason = $cancelReason;
         $this->canceledAt = new DateTimeImmutable();
         $this->updatedAt = new DateTimeImmutable();
     }

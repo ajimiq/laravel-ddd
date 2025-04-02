@@ -1,31 +1,11 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>注文詳細 - {{ $order['order_id'] }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-white">
-    <div class="container mx-auto px-4 py-8 max-w-3xl">
-        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
-            <div class="flex">
-                <div class="flex-shrink-0">
-                    <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                </div>
-                <div class="ml-3">
-                    <p class="text-sm text-yellow-700">
-                        表示されているデータはテスト用の架空のデータです。実際の取引を示すものではありません。
-                    </p>
-                </div>
-            </div>
-        </div>
+<x-app-layout>
+    <x-slot name="title">注文詳細 - {{ $order['order_id'] }}</x-slot>
+    <x-slot name="header">注文詳細</x-slot>
+    <x-slot name="notification">表示されているデータはテスト用の架空のデータです。実際の取引を示すものではありません。</x-slot>
+
+    <div class="max-w-3xl mx-auto">
         {{-- ヘッダー --}}
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold">注文詳細</h1>
-            <a href="javascript:window.close()" class="text-blue-600 hover:text-blue-900">閉じる</a>
         </div>
 
         {{-- 注文基本情報 --}}
@@ -49,7 +29,7 @@
                                    ($order['status'] === 'canceled' ? 'bg-red-100 text-gray-800' : 'bg-blue-100 text-blue-800'))) }}">
                                 {{ $statuses[$order['status']] ?? $order['status'] }}
                             </span>
-                            @if($order['canceled_at'])
+                            @if($order['status'] === 'canceled')
                                 <span class="block text-xs text-gray-500 mt-1">
                                     キャンセル日時: {{ $order['canceled_at'] }}<br>
                                     キャンセル理由: {{ $order['cancel_reason'] }}
@@ -142,10 +122,11 @@
 
         {{-- 操作ボタン --}}
         <div class="flex justify-end space-x-4">
+            <a href="javascript:window.close()" 
+               class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">閉じる</a>
             <a href="{{ route('orders.receipt', $order['order_id']) }}" 
                target="_blank"
                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">領収書を表示</a>
         </div>
     </div>
-</body>
-</html> 
+</x-app-layout> 

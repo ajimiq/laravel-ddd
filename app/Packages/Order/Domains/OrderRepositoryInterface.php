@@ -42,12 +42,12 @@ interface OrderRepositoryInterface
     public function save(Order $order): void;
 
     /**
-     * 注文を更新
+     * 注文をキャンセル
      *
      * @param Order $order
      * @return void
      */
-    public function update(Order $order): void;
+    public function cancel(Order $order): void;
 
     /**
      * 注文を削除
