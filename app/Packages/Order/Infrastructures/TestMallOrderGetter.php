@@ -161,7 +161,7 @@ class TestMallOrderGetter implements OrderGetterInterface
         shuffle($productKeys);
         // 商品数分だけキーを選択
         $selectedProducts = array_slice($productKeys, 0, $numItems);
-        
+
         Log::channel('debug')->debug('after2 selectedProducts: ' . json_encode($selectedProducts));
 
         foreach ($selectedProducts as $productKey) {
